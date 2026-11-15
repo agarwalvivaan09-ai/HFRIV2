@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Held-out test (10 half-splits): weights chosen on one half, AUC on the other.}
+\label{tab:heldout}
+\begin{tabular}{lrrrrr}
+\toprule
+Yardstick & Chosen & Original & Final (fixed) & Gain & Splits better \\
+\midrule
+Now & 0.7500 & 0.7089 & 0.7536 & +0.0410 & 10/10 \\
+Future & 0.7048 & 0.7137 & 0.7080 & -0.0089 & 3/10 \\
+Combined & 0.7274 & 0.7113 & 0.7308 & +0.0161 & 10/10 \\
+\bottomrule
+\end{tabular}
+\end{table}

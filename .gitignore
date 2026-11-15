@@ -1,0 +1,5 @@
+# Raw Federal Reserve files: downloaded and checked by code/01_download_data.py
+data/raw/
+__pycache__/
+*.pyc
+.DS_Store

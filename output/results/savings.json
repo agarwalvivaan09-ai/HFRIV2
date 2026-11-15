@@ -1,0 +1,141 @@
+{
+ "correlation_S_E": {
+  "scf2025": 0.45212933132510325,
+  "panel2007": 0.2701341064679398
+ },
+ "independent_effect_2025": {
+  "out_late60": {
+   "odds_ratio": 0.9529299335357989,
+   "ci_low": 0.9238185890645612,
+   "ci_high": 0.9829586338461104,
+   "p": 0.002320299908318549
+  },
+  "out_late": {
+   "odds_ratio": 0.9787811781274987,
+   "ci_low": 0.9548555886143091,
+   "ci_high": 1.003306265449969,
+   "p": 0.08939813269649433
+  },
+  "out_payday": {
+   "odds_ratio": 0.9870137167181467,
+   "ci_low": 0.9313015541251607,
+   "ci_high": 1.0460586827914222,
+   "p": 0.6592457140043422
+  },
+  "out_bankruptcy": {
+   "odds_ratio": 1.0395069763363272,
+   "ci_low": 0.9535476628822511,
+   "ci_high": 1.1332152507045976,
+   "p": 0.3789327539837015
+  },
+  "out_credit_constrained": {
+   "odds_ratio": 0.9598915715005307,
+   "ci_low": 0.93490557975309,
+   "ci_high": 0.9855453309852955,
+   "p": 0.0023500064361710905
+  }
+ },
+ "buffer_up_logit": {
+  "S": {
+   "odds_ratio": 1.0167737778663648,
+   "ci_low": 0.9724657342286575,
+   "ci_high": 1.0631006100967193,
+   "p": 0.4643111727614101
+  },
+  "E": {
+   "odds_ratio": 0.835386533422397,
+   "ci_low": 0.8155492681448064,
+   "ci_high": 0.8557063165674716,
+   "p": 1.0237135822158974e-48
+  },
+  "D": {
+   "odds_ratio": 1.064155522224015,
+   "ci_low": 1.039054579025176,
+   "ci_high": 1.0898628410283229,
+   "p": 3.294839413388923e-07
+  },
+  "log_income": {
+   "odds_ratio": 1.3852290964062752,
+   "ci_low": 1.2811713277628485,
+   "ci_high": 1.4977385209527079,
+   "p": 2.8645335600972863e-16
+  }
+ },
+ "rebuilt_logit_low_buffer": {
+  "S": {
+   "odds_ratio": 1.0782323285116353,
+   "ci_low": 0.9992551081416803,
+   "ci_high": 1.1634515998719166,
+   "p": 0.05228257907706078
+  },
+  "D": {
+   "odds_ratio": 1.049725553641398,
+   "ci_low": 1.005788072111116,
+   "ci_high": 1.0955824278715478,
+   "p": 0.02611074839113482
+  },
+  "log_income": {
+   "odds_ratio": 1.4220800536378466,
+   "ci_low": 1.2184484345943163,
+   "ci_high": 1.6597433436959121,
+   "p": 7.976722916691039e-06
+  }
+ },
+ "rebuilt_rate_low_buffer": {
+  "spent more than income": 0.2406555151020718,
+  "spent about income": 0.2820750592650687,
+  "spent less than income": 0.3458696213036371
+ },
+ "saving_by_buffer": [
+  {
+   "saving": "spent more than income",
+   "buffer": "little buffer",
+   "new_late60_2009": 0.12423410099990886,
+   "households": 221
+  },
+  {
+   "saving": "spent more than income",
+   "buffer": "some buffer",
+   "new_late60_2009": 0.08656707134736374,
+   "households": 232
+  },
+  {
+   "saving": "spent about income",
+   "buffer": "little buffer",
+   "new_late60_2009": 0.08795276830077421,
+   "households": 439
+  },
+  {
+   "saving": "spent about income",
+   "buffer": "some buffer",
+   "new_late60_2009": 0.05860057189719888,
+   "households": 416
+  },
+  {
+   "saving": "spent less than income",
+   "buffer": "little buffer",
+   "new_late60_2009": 0.11490386663785428,
+   "households": 721
+  },
+  {
+   "saving": "spent less than income",
+   "buffer": "some buffer",
+   "new_late60_2009": 0.03214739053631222,
+   "households": 1884
+  }
+ ],
+ "low_buffer_future_logit": {
+  "S": {
+   "odds_ratio": 1.014018319182194,
+   "ci_low": 0.9059430413107954,
+   "ci_high": 1.1349865330930151,
+   "p": 0.8086993878168883
+  },
+  "D": {
+   "odds_ratio": 0.8904129236451441,
+   "ci_low": 0.8426704089450197,
+   "ci_high": 0.9408603484568567,
+   "p": 3.657733655003227e-05
+  }
+ }
+}

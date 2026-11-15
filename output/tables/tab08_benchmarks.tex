@@ -1,0 +1,30 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Agreement with benchmarks: AUC (Spearman $\rho$).}
+\label{tab:bench}
+\begin{tabular}{llccc}
+\toprule
+Group & Benchmark & Original & Final & Emergency only \\
+\midrule
+Simulation & ONS-style resilient (paper) & 0.995 (0.73) & 0.999 (0.74) & 0.999 (0.74) \\
+Simulation & Survives 25% income shock & 0.995 (0.73) & 0.999 (0.74) & 0.999 (0.74) \\
+Simulation & Survives 25% expense shock & 0.996 (0.73) & 0.999 (0.73) & 1.000 (0.74) \\
+SCF 2025 & ONS-style resilient & 0.776 (0.45) & 0.909 (0.66) & 0.977 (0.76) \\
+SCF 2025 & 3 months of spending in liquid savings (Fed) & 0.882 (0.68) & 0.977 (0.82) & 0.999 (0.86) \\
+SCF 2025 & 6 months of spending in liquid savings & 0.883 (0.63) & 0.970 (0.76) & 0.999 (0.81) \\
+SCF 2025 & Debt payments below 40% of income (Fed) & 0.932 (0.41) & 0.894 (0.36) & 0.687 (0.17) \\
+SCF 2025 & Would cope with job loss from savings & 0.738 (0.47) & 0.762 (0.51) & 0.763 (0.51) \\
+SCF 2025 & Would need to borrow if job lost & 0.582 (0.11) & 0.605 (0.12) & 0.616 (0.14) \\
+SCF 2025 distress & 60+ days late & 0.736 (0.25) & 0.763 (0.28) & 0.759 (0.27) \\
+SCF 2025 distress & Any late payment & 0.731 (0.35) & 0.763 (0.38) & 0.748 (0.36) \\
+SCF 2025 distress & Payday loan & 0.702 (0.12) & 0.752 (0.15) & 0.794 (0.17) \\
+SCF 2025 distress & Bankruptcy (5 years) & 0.673 (0.08) & 0.746 (0.11) & 0.746 (0.10) \\
+SCF 2025 distress & Denied or feared credit & 0.706 (0.32) & 0.734 (0.35) & 0.742 (0.37) \\
+Panel 2007 & ONS-style resilient (2007) & 0.853 (0.61) & 0.940 (0.75) & 1.000 (0.84) \\
+Panel 2007 & Debt payments below 40% of income (2007) & 0.895 (0.42) & 0.790 (0.29) & 0.506 (-0.01) \\
+Panel future & New 60+ days late by 2009 & 0.725 (0.22) & 0.718 (0.21) & 0.657 (0.14) \\
+Panel future & New credit denial or fear by 2009 & 0.692 (0.22) & 0.690 (0.20) & 0.656 (0.15) \\
+\bottomrule
+\end{tabular}
+\end{table}

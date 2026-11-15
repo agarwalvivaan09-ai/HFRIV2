@@ -1,0 +1,213 @@
+{
+ "n_households": 1000,
+ "n_household_months": 12000,
+ "original": {
+  "distribution": {
+   "mean": 75.83887073019993,
+   "median": 82.04344450420892,
+   "sd": 16.244973930511406,
+   "min": 16.270029867816117,
+   "max": 97.23507338420436,
+   "p10": 48.40215218627608,
+   "p25": 67.56888805281999,
+   "p75": 87.68700635591595,
+   "p90": 91.35372434661609
+  },
+  "ons_pearson": 0.8729358043078498,
+  "ons_spearman": 0.7339132877051718,
+  "quartiles": [
+   {
+    "quartile": "Q1",
+    "mean_hfri": 50.84312261219523,
+    "ons": 0.076,
+    "income_survival": 0.076,
+    "expense_survival": 0.088,
+    "income_borrowing": 16841.475288689126,
+    "expense_borrowing": 13444.650458768152
+   },
+   {
+    "quartile": "Q2",
+    "mean_hfri": 76.56528512713948,
+    "ons": 0.96,
+    "income_survival": 0.96,
+    "expense_survival": 0.976,
+    "income_borrowing": 102.81210715043932,
+    "expense_borrowing": 43.01454008283165
+   },
+   {
+    "quartile": "Q3",
+    "mean_hfri": 84.9009043516869,
+    "ons": 1.0,
+    "income_survival": 1.0,
+    "expense_survival": 1.0,
+    "income_borrowing": 0.0,
+    "expense_borrowing": 0.0
+   },
+   {
+    "quartile": "Q4",
+    "mean_hfri": 91.0461708297781,
+    "ons": 1.0,
+    "income_survival": 1.0,
+    "expense_survival": 1.0,
+    "income_borrowing": 0.0,
+    "expense_borrowing": 0.0
+   }
+  ],
+  "bands": [
+   {
+    "band": "<60",
+    "households": 197,
+    "income_survival": 0.015228426395939087,
+    "expense_survival": 0.015228426395939087
+   },
+   {
+    "band": "60-65",
+    "households": 35,
+    "income_survival": 0.22857142857142856,
+    "expense_survival": 0.2571428571428571
+   },
+   {
+    "band": "65-70",
+    "households": 34,
+    "income_survival": 0.5588235294117647,
+    "expense_survival": 0.6764705882352942
+   },
+   {
+    "band": "70-75",
+    "households": 71,
+    "income_survival": 0.9436619718309859,
+    "expense_survival": 0.9577464788732394
+   },
+   {
+    "band": "75-100",
+    "households": 663,
+    "income_survival": 0.9984917043740573,
+    "expense_survival": 1.0
+   }
+  ],
+  "stress_change_income": -2.1914031694552785,
+  "stress_change_expense": -1.7973336157631303
+ },
+ "final": {
+  "distribution": {
+   "mean": 72.12301262062937,
+   "median": 83.24568783007399,
+   "sd": 25.74397911283192,
+   "min": 8.19159660892847,
+   "max": 98.63195710214217,
+   "p10": 23.258548717946468,
+   "p25": 60.99417094010163,
+   "p75": 91.26080099291516,
+   "p90": 94.79018694933791
+  },
+  "ons_pearson": 0.9172273228083173,
+  "ons_spearman": 0.7396558757981067,
+  "quartiles": [
+   {
+    "quartile": "Q1",
+    "mean_hfri": 31.159809261743103,
+    "ons": 0.048,
+    "income_survival": 0.048,
+    "expense_survival": 0.068,
+    "income_borrowing": 16926.54695437266,
+    "expense_borrowing": 13482.974173998702
+   },
+   {
+    "quartile": "Q2",
+    "mean_hfri": 75.37345953212652,
+    "ons": 0.988,
+    "income_survival": 0.988,
+    "expense_survival": 0.996,
+    "income_borrowing": 17.740441466902077,
+    "expense_borrowing": 4.690824852281272
+   },
+   {
+    "quartile": "Q3",
+    "mean_hfri": 87.48749277666114,
+    "ons": 1.0,
+    "income_survival": 1.0,
+    "expense_survival": 1.0,
+    "income_borrowing": 0.0,
+    "expense_borrowing": 0.0
+   },
+   {
+    "quartile": "Q4",
+    "mean_hfri": 94.4712889119867,
+    "ons": 1.0,
+    "income_survival": 1.0,
+    "expense_survival": 1.0,
+    "income_borrowing": 0.0,
+    "expense_borrowing": 0.0
+   }
+  ],
+  "bands": [
+   {
+    "band": "<60",
+    "households": 245,
+    "income_survival": 0.036734693877551024,
+    "expense_survival": 0.05714285714285714
+   },
+   {
+    "band": "60-65",
+    "households": 27,
+    "income_survival": 0.8148148148148148,
+    "expense_survival": 0.8888888888888888
+   },
+   {
+    "band": "65-70",
+    "households": 27,
+    "income_survival": 1.0,
+    "expense_survival": 1.0
+   },
+   {
+    "band": "70-75",
+    "households": 53,
+    "income_survival": 1.0,
+    "expense_survival": 1.0
+   },
+   {
+    "band": "75-100",
+    "households": 648,
+    "income_survival": 1.0,
+    "expense_survival": 1.0
+   }
+  ],
+  "stress_change_income": -4.821086972801613,
+  "stress_change_expense": -3.954133954678888
+ },
+ "component_means": {
+  "S": 78.28997214903019,
+  "D": 88.21511369659254,
+  "E": 62.35320043707198,
+  "X": 74.49719663810497
+ },
+ "component_correlations": {
+  "S": {
+   "S": 1.0,
+   "D": 0.0369,
+   "E": 0.4325,
+   "X": 0.1606
+  },
+  "D": {
+   "S": 0.0369,
+   "D": 1.0,
+   "E": 0.7645,
+   "X": 0.0096
+  },
+  "E": {
+   "S": 0.4325,
+   "D": 0.7645,
+   "E": 1.0,
+   "X": 0.052
+  },
+  "X": {
+   "S": 0.1606,
+   "D": 0.0096,
+   "E": 0.052,
+   "X": 1.0
+  }
+ },
+ "ons_rate": 0.759,
+ "rank_correlation_original_final": 0.9507376467376467,
+ "quartile_changes": 212
+}

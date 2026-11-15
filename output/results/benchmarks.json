@@ -1,0 +1,463 @@
+{
+ "rows": [
+  {
+   "benchmark": "ONS-style resilient (paper)",
+   "group": "Simulation",
+   "version": "original",
+   "pearson": 0.8729358043078521,
+   "spearman": 0.7339132877051718,
+   "auc": 0.9953640682487878
+  },
+  {
+   "benchmark": "ONS-style resilient (paper)",
+   "group": "Simulation",
+   "version": "final",
+   "pearson": 0.9172273228083188,
+   "spearman": 0.7396558757981067,
+   "auc": 0.999240100809648
+  },
+  {
+   "benchmark": "ONS-style resilient (paper)",
+   "group": "Simulation",
+   "version": "emergency_only",
+   "pearson": 0.9123703828118535,
+   "spearman": 0.7414509493730864,
+   "auc": 0.9991088951940477
+  },
+  {
+   "benchmark": "Survives 25% income shock",
+   "group": "Simulation",
+   "version": "original",
+   "pearson": 0.8729358043078521,
+   "spearman": 0.7339132877051718,
+   "auc": 0.9953640682487878
+  },
+  {
+   "benchmark": "Survives 25% income shock",
+   "group": "Simulation",
+   "version": "final",
+   "pearson": 0.9172273228083188,
+   "spearman": 0.7396558757981067,
+   "auc": 0.999240100809648
+  },
+  {
+   "benchmark": "Survives 25% income shock",
+   "group": "Simulation",
+   "version": "emergency_only",
+   "pearson": 0.9123703828118535,
+   "spearman": 0.7414509493730864,
+   "auc": 0.9991088951940477
+  },
+  {
+   "benchmark": "Survives 25% expense shock",
+   "group": "Simulation",
+   "version": "original",
+   "pearson": 0.8747269920026964,
+   "spearman": 0.7281313554245287,
+   "auc": 0.9964740800249938
+  },
+  {
+   "benchmark": "Survives 25% expense shock",
+   "group": "Simulation",
+   "version": "final",
+   "pearson": 0.9176742140860632,
+   "spearman": 0.7324269949525417,
+   "auc": 0.9994030483586619
+  },
+  {
+   "benchmark": "Survives 25% expense shock",
+   "group": "Simulation",
+   "version": "emergency_only",
+   "pearson": 0.912515504376146,
+   "spearman": 0.7351769297045657,
+   "auc": 0.9999330521523733
+  },
+  {
+   "benchmark": "ONS-style resilient",
+   "group": "SCF 2025",
+   "version": "original",
+   "pearson": 0.4438145033145062,
+   "spearman": 0.45162635304911614,
+   "auc": 0.7762641372666799
+  },
+  {
+   "benchmark": "ONS-style resilient",
+   "group": "SCF 2025",
+   "version": "final",
+   "pearson": 0.6681413731030548,
+   "spearman": 0.6569632331496208,
+   "auc": 0.9094514985787823
+  },
+  {
+   "benchmark": "ONS-style resilient",
+   "group": "SCF 2025",
+   "version": "emergency_only",
+   "pearson": 0.7958098900203796,
+   "spearman": 0.7642217073293928,
+   "auc": 0.9774406198082479
+  },
+  {
+   "benchmark": "3 months of spending in liquid savings (Fed)",
+   "group": "SCF 2025",
+   "version": "original",
+   "pearson": 0.6508956135856897,
+   "spearman": 0.6761626732768781,
+   "auc": 0.8822707883845448
+  },
+  {
+   "benchmark": "3 months of spending in liquid savings (Fed)",
+   "group": "SCF 2025",
+   "version": "final",
+   "pearson": 0.8212854724597746,
+   "spearman": 0.8213822553339722,
+   "auc": 0.9770472602128633
+  },
+  {
+   "benchmark": "3 months of spending in liquid savings (Fed)",
+   "group": "SCF 2025",
+   "version": "emergency_only",
+   "pearson": 0.8784656195452666,
+   "spearman": 0.857914870350125,
+   "auc": 0.9992509494261949
+  },
+  {
+   "benchmark": "6 months of spending in liquid savings",
+   "group": "SCF 2025",
+   "version": "original",
+   "pearson": 0.5971617702376376,
+   "spearman": 0.6339086577040396,
+   "auc": 0.8834678090851025
+  },
+  {
+   "benchmark": "6 months of spending in liquid savings",
+   "group": "SCF 2025",
+   "version": "final",
+   "pearson": 0.7312782179010893,
+   "spearman": 0.7597534035337835,
+   "auc": 0.9703969318307533
+  },
+  {
+   "benchmark": "6 months of spending in liquid savings",
+   "group": "SCF 2025",
+   "version": "emergency_only",
+   "pearson": 0.7581857952961844,
+   "spearman": 0.8059252107510556,
+   "auc": 0.9991977865136148
+  },
+  {
+   "benchmark": "Debt payments below 40% of income (Fed)",
+   "group": "SCF 2025",
+   "version": "original",
+   "pearson": 0.4744530972548845,
+   "spearman": 0.4069167384546235,
+   "auc": 0.9324501228191163
+  },
+  {
+   "benchmark": "Debt payments below 40% of income (Fed)",
+   "group": "SCF 2025",
+   "version": "final",
+   "pearson": 0.4006141950397845,
+   "spearman": 0.3576313662744479,
+   "auc": 0.8936521664248666
+  },
+  {
+   "benchmark": "Debt payments below 40% of income (Fed)",
+   "group": "SCF 2025",
+   "version": "emergency_only",
+   "pearson": 0.16888324159168447,
+   "spearman": 0.16872266378830963,
+   "auc": 0.6872108254404673
+  },
+  {
+   "benchmark": "Would cope with job loss from savings",
+   "group": "SCF 2025",
+   "version": "original",
+   "pearson": 0.45815927351574703,
+   "spearman": 0.4698267050367891,
+   "auc": 0.7383956581135117
+  },
+  {
+   "benchmark": "Would cope with job loss from savings",
+   "group": "SCF 2025",
+   "version": "final",
+   "pearson": 0.5039405459102263,
+   "spearman": 0.5088981902653246,
+   "auc": 0.7620644736266972
+  },
+  {
+   "benchmark": "Would cope with job loss from savings",
+   "group": "SCF 2025",
+   "version": "emergency_only",
+   "pearson": 0.5042401318479464,
+   "spearman": 0.507868642432393,
+   "auc": 0.7633862415483164
+  },
+  {
+   "benchmark": "Would need to borrow if job lost",
+   "group": "SCF 2025",
+   "version": "original",
+   "pearson": 0.10269769861473313,
+   "spearman": 0.10612024584247429,
+   "auc": 0.5819546274507685
+  },
+  {
+   "benchmark": "Would need to borrow if job lost",
+   "group": "SCF 2025",
+   "version": "final",
+   "pearson": 0.12554357759195928,
+   "spearman": 0.12487709408838624,
+   "auc": 0.6051337325832484
+  },
+  {
+   "benchmark": "Would need to borrow if job lost",
+   "group": "SCF 2025",
+   "version": "emergency_only",
+   "pearson": 0.13583801492393516,
+   "spearman": 0.13602695701157425,
+   "auc": 0.6162308931788422
+  },
+  {
+   "benchmark": "60+ days late",
+   "group": "SCF 2025 distress",
+   "version": "original",
+   "pearson": 0.258596609882522,
+   "spearman": 0.24926975816862534,
+   "auc": 0.7355632805369537
+  },
+  {
+   "benchmark": "60+ days late",
+   "group": "SCF 2025 distress",
+   "version": "final",
+   "pearson": 0.28324193011871474,
+   "spearman": 0.27545527014124743,
+   "auc": 0.7634502962882295
+  },
+  {
+   "benchmark": "60+ days late",
+   "group": "SCF 2025 distress",
+   "version": "emergency_only",
+   "pearson": 0.27633865987378814,
+   "spearman": 0.26999920868508775,
+   "auc": 0.7588151384261469
+  },
+  {
+   "benchmark": "Any late payment",
+   "group": "SCF 2025 distress",
+   "version": "original",
+   "pearson": 0.353224741451858,
+   "spearman": 0.3467806130264075,
+   "auc": 0.7305677564245427
+  },
+  {
+   "benchmark": "Any late payment",
+   "group": "SCF 2025 distress",
+   "version": "final",
+   "pearson": 0.3899025690743395,
+   "spearman": 0.3819725262820216,
+   "auc": 0.7632575440059067
+  },
+  {
+   "benchmark": "Any late payment",
+   "group": "SCF 2025 distress",
+   "version": "emergency_only",
+   "pearson": 0.3673161450536564,
+   "spearman": 0.35957934835854716,
+   "auc": 0.7480907837404631
+  },
+  {
+   "benchmark": "Payday loan",
+   "group": "SCF 2025 distress",
+   "version": "original",
+   "pearson": 0.1217048594883499,
+   "spearman": 0.1223175586036285,
+   "auc": 0.701858423697366
+  },
+  {
+   "benchmark": "Payday loan",
+   "group": "SCF 2025 distress",
+   "version": "final",
+   "pearson": 0.146834434957926,
+   "spearman": 0.14782883821174653,
+   "auc": 0.7518777765650804
+  },
+  {
+   "benchmark": "Payday loan",
+   "group": "SCF 2025 distress",
+   "version": "emergency_only",
+   "pearson": 0.17131704625918637,
+   "spearman": 0.1686401011116884,
+   "auc": 0.7937847960738793
+  },
+  {
+   "benchmark": "Bankruptcy (5 years)",
+   "group": "SCF 2025 distress",
+   "version": "original",
+   "pearson": 0.08589897734898608,
+   "spearman": 0.08332419297173706,
+   "auc": 0.6731232197218084
+  },
+  {
+   "benchmark": "Bankruptcy (5 years)",
+   "group": "SCF 2025 distress",
+   "version": "final",
+   "pearson": 0.10789574364178012,
+   "spearman": 0.10573982501583142,
+   "auc": 0.7458401499570694
+  },
+  {
+   "benchmark": "Bankruptcy (5 years)",
+   "group": "SCF 2025 distress",
+   "version": "emergency_only",
+   "pearson": 0.10638480712023217,
+   "spearman": 0.10413816416970864,
+   "auc": 0.7459955509655806
+  },
+  {
+   "benchmark": "Denied or feared credit",
+   "group": "SCF 2025 distress",
+   "version": "original",
+   "pearson": 0.318385742375986,
+   "spearman": 0.3194988193439941,
+   "auc": 0.7059861180732466
+  },
+  {
+   "benchmark": "Denied or feared credit",
+   "group": "SCF 2025 distress",
+   "version": "final",
+   "pearson": 0.3534710261140651,
+   "spearman": 0.35272227782290727,
+   "auc": 0.7342407440550629
+  },
+  {
+   "benchmark": "Denied or feared credit",
+   "group": "SCF 2025 distress",
+   "version": "emergency_only",
+   "pearson": 0.37114292161510776,
+   "spearman": 0.36581350080113095,
+   "auc": 0.7423066439944662
+  },
+  {
+   "benchmark": "ONS-style resilient (2007)",
+   "group": "Panel 2007",
+   "version": "original",
+   "pearson": 0.5999803070691057,
+   "spearman": 0.6133388129932378,
+   "auc": 0.8533836415508645
+  },
+  {
+   "benchmark": "ONS-style resilient (2007)",
+   "group": "Panel 2007",
+   "version": "final",
+   "pearson": 0.7418859535853741,
+   "spearman": 0.754229623523155,
+   "auc": 0.9398964670388835
+  },
+  {
+   "benchmark": "ONS-style resilient (2007)",
+   "group": "Panel 2007",
+   "version": "emergency_only",
+   "pearson": 0.8396056357546782,
+   "spearman": 0.8428597513179351,
+   "auc": 0.9999999999999993
+  },
+  {
+   "benchmark": "Debt payments below 40% of income (2007)",
+   "group": "Panel 2007",
+   "version": "original",
+   "pearson": 0.4582475364072868,
+   "spearman": 0.41506447062072216,
+   "auc": 0.8947029231792321
+  },
+  {
+   "benchmark": "Debt payments below 40% of income (2007)",
+   "group": "Panel 2007",
+   "version": "final",
+   "pearson": 0.3166198833123572,
+   "spearman": 0.29265293104883455,
+   "auc": 0.7899731013366907
+  },
+  {
+   "benchmark": "Debt payments below 40% of income (2007)",
+   "group": "Panel 2007",
+   "version": "emergency_only",
+   "pearson": 0.002209190394613124,
+   "spearman": -0.005336397378870862,
+   "auc": 0.5061974478078303
+  },
+  {
+   "benchmark": "New 60+ days late by 2009",
+   "group": "Panel future",
+   "version": "original",
+   "pearson": 0.22876939968147042,
+   "spearman": 0.22050880813110388,
+   "auc": 0.7254843647544462
+  },
+  {
+   "benchmark": "New 60+ days late by 2009",
+   "group": "Panel future",
+   "version": "final",
+   "pearson": 0.20857302627723592,
+   "spearman": 0.20658605061119464,
+   "auc": 0.7177808485285492
+  },
+  {
+   "benchmark": "New 60+ days late by 2009",
+   "group": "Panel future",
+   "version": "emergency_only",
+   "pearson": 0.14299370258773378,
+   "spearman": 0.14184824550088365,
+   "auc": 0.6571000675482588
+  },
+  {
+   "benchmark": "New credit denial or fear by 2009",
+   "group": "Panel future",
+   "version": "original",
+   "pearson": 0.22205552251055716,
+   "spearman": 0.2187980764132304,
+   "auc": 0.6917229324645633
+  },
+  {
+   "benchmark": "New credit denial or fear by 2009",
+   "group": "Panel future",
+   "version": "final",
+   "pearson": 0.2016290892219728,
+   "spearman": 0.20174573993279638,
+   "auc": 0.6896656201692593
+  },
+  {
+   "benchmark": "New credit denial or fear by 2009",
+   "group": "Panel future",
+   "version": "emergency_only",
+   "pearson": 0.1473452268413704,
+   "spearman": 0.14557742369374224,
+   "auc": 0.6556423927625347
+  }
+ ],
+ "summary_auc": {
+  "Simulation": {
+   "original": 0.9957340721741899,
+   "final": 0.9992944166593193,
+   "emergency_only": 0.9993836141801561
+  },
+  "SCF 2025": {
+   "original": 0.7991338571866206,
+   "final": 0.8529576772095352,
+   "emergency_only": 0.8404528859859473
+  },
+  "SCF 2025 distress": {
+   "original": 0.7094197596907834,
+   "final": 0.7517333021742697,
+   "emergency_only": 0.7577985826401072
+  },
+  "Panel 2007": {
+   "original": 0.8740432823650484,
+   "final": 0.8649347841877871,
+   "emergency_only": 0.7530987239039149
+  },
+  "Panel future": {
+   "original": 0.7086036486095048,
+   "final": 0.7037232343489042,
+   "emergency_only": 0.6563712301553968
+  }
+ }
+}
