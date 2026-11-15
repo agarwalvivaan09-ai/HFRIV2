@@ -42,558 +42,730 @@
 
 \begin{document}
 
-% ---------------------------------------------------------------------
+
+% =====================================================================
 % TITLE PAGE
-% ---------------------------------------------------------------------
+% =====================================================================
 \thispagestyle{fancy}
 \begin{center}
 \vspace*{1.2cm}
 {\LARGE\bfseries Household Financial\\[4pt] Resilience Index: Version 2}\\[10pt]
-{\large Testing a Simulated Index on Real Households}\\[22pt]
+{\large From Simulated Households to Real Ones}\\[22pt]
 {\large Vivaan Agarwal}\\[4pt]
 La Martiniere for Boys, Kolkata\\[24pt]
 \end{center}
 
 \begin{rqbox}
 \centering\textbf{Research Question}\\[4pt]
-Does the Household Financial Resilience Index, built and tested on simulated households, actually identify real
-households that are in financial trouble today and households that will fall into trouble later?
-And if its original equal weights are not the best ones, what should the weights be?
+Does the Household Financial Resilience Index, which was built and tested on computer-generated households,
+correctly identify real families who are in financial trouble today and real families who will get into trouble
+in the future? And if its original weights are not the best ones, what should they be?
 \end{rqbox}
 
-\section{Abstract}
-Version~1 of the Household Financial Resilience Index (HFRI) combined four dimensions (Savings Strength, Debt
-Sustainability, Emergency Coverage and Expense Stability) into a single 0--100 score with equal weights of 25\pct{}
-each. It worked well on 1,000 simulated households, but I ended that paper with a clear warning: a simulation cannot
-tell you whether an index works in the real world. This paper does that test.
+\section*{Abstract}
+Some families can take a financial hit, such as a job loss or a large hospital bill, and recover. Others cannot. This
+ability is called \emph{financial resilience}. In Version~1 of this research, I built the Household Financial
+Resilience Index (HFRI), a single score from 0 to 100 that measures how financially resilient a household is. It
+combines four parts: how much the household saves, how heavy its debts are, how much cash it has for emergencies, and
+how steady its spending is. Each part counted for exactly one quarter of the score. I tested it on 1,000 households
+that a computer program generated, and it behaved sensibly. But because those households were not real, Version~1
+could not show that the index works in the real world.
 
-I scored real households from three Federal Reserve datasets: the Survey of Consumer Finances (SCF) 2025
-(4,360 households), the SCF 2022 (4,595 households) and the 2007--09 SCF Panel (3,857 households interviewed once
-before and once after the financial crisis). I then checked whether low HFRI scores pick out households that are
-behind on payments, using payday loans, filing for bankruptcy or being denied credit.
+This paper tests the index on real families. I used three surveys run by the Federal Reserve, the central bank of the
+United States, covering more than 12,000 real households. The surveys record each family's finances and also
+whether the family was in trouble: behind on loan payments, using emergency high-interest loans, going bankrupt,
+or being refused credit. One of these surveys interviewed the same families in 2007 and again in 2009, so I could
+also check whether the index can see trouble \emph{coming}.
 
-The original HFRI passed. Households in its lowest tenth were 60+ days late on a payment 20.9\pct{} of the time,
-compared with 0.0\pct{} in its highest tenth, and its AUC (a measure of how well it separates struggling households from
-stable ones) was 0.736. But the data also told me something I did not expect. Emergency Coverage explains who is
-struggling \emph{now}, while Debt Sustainability matters much more for who will struggle \emph{next}. The weights that
-are best for one are bad for the other. Balancing the two, the revised weights are
-\textbf{Savings 5\pct{}, Debt 30\pct{}, Emergency 55\pct{} and Stability 10\pct{}}. They raise the AUC for serious
-delinquency from 0.736 to 0.763 ($p<0.01$), beat the original on unseen households in 10 out of 10 held-out tests,
-and stay far better than Emergency Coverage alone at predicting future distress (0.718 vs 0.657). All code, data
-links and file fingerprints are public, and the full analysis reruns in about ten minutes.
+The original index worked. Among the families with the lowest tenth of scores, about one in five were badly behind on
+a loan payment. Among the families with the highest tenth of scores, almost none were. But the real data also showed
+that the four parts should not count equally. Cash savings explain who is in trouble \emph{now}, while debt explains
+who will get into trouble \emph{later}. After testing every possible combination, I revised the weights to
+\textbf{Savings 5\pct, Debt 30\pct, Emergency savings 55\pct{} and Spending stability 10\pct}. The revised index is
+better at recognising families in trouble today, almost as good at predicting future trouble, and it beat the original
+in all ten fair tests on families it had never seen before.
 
-% ---------------------------------------------------------------------
+% =====================================================================
 \section{Introduction}
-% ---------------------------------------------------------------------
-In Version~1 of this research, I asked whether a transparent mathematical index could measure household financial
-resilience. I built the HFRI, calibrated its five scoring functions, simulated 1,000 households for twelve months and
-hit them with income and expense shocks. The index behaved exactly the way it should: higher scores meant more
-liquid savings, lighter debt and a much better chance of surviving a shock. Its correlation with an ONS-style
-resilience benchmark was 0.8729.
+% =====================================================================
+Imagine two families. Both earn exactly the same amount every month. On paper, they look identical. Now imagine that
+the main earner in each family suddenly loses their job. The first family has six months of expenses saved in the bank
+and no loans. It can pay its bills while looking for new work. The second family has no savings and a large loan with
+a big monthly repayment. Within a few weeks, it starts missing payments, borrowing at high interest, and falling deeper
+into trouble.
 
-But let me be honest about what that proved. It proved that the index was \emph{internally coherent}. It did not
-prove that it was \emph{right}. I designed the simulated households, I chose the calibration points, and I chose the
-equal weights. The households could only ever behave the way my code told them to. In the conclusion of Version~1, I
-wrote that the next step had to be testing the index on real households with real outcomes. So that is exactly what
-this paper does.
+Same income. Completely different outcomes. That gap is what this research is about.
 
-Version~2 asks three questions:
+In Version~1, I designed a way to measure that gap with a single number: the Household Financial Resilience Index, or
+HFRI. I built it carefully, tested it on 1,000 households created by a computer program, and found that it behaved the
+way a good measure should. But I ended Version~1 with an honest warning. A computer program only does what you tell it
+to do. If I design the households, I also decide how they behave, so the index was always likely to look good on them.
+The real test is whether it works on real families.
+
+This paper is that test. It has two parts. \textbf{Part~I} explains what financial resilience is, how other
+researchers and governments have tried to measure it, how the HFRI was built in Version~1, and what Version~1 could not
+tell us. \textbf{Part~II} tests the HFRI on thousands of real families, shows what worked and what did not, and explains
+how and why the index was improved.
+
+Three questions guide Part~II:
 \begin{enumerate}
-\item \textbf{Does the original HFRI work on real households?} Do households with low scores actually miss payments,
-take payday loans, go bankrupt or get refused credit more often?
-\item \textbf{Does it predict the future?} If I score a household in 2007, does that score tell me who will fall
-into trouble by 2009, during one of the worst financial crises in modern history?
-\item \textbf{Are equal weights the right weights?} Version~1 used 25:25:25:25 because, with simulated data, I had no
-real outcome to estimate anything better. Now I do.
+\item \textbf{Does the original HFRI work on real families?} Are families with low scores actually more likely to be in
+financial trouble?
+\item \textbf{Can it see trouble coming?} If I calculate a family's score today, does it tell me who will get into
+trouble in the future?
+\item \textbf{Should all four parts really count equally?} Version~1 gave each part 25\pct{} of the score because,
+without real data, there was no evidence to do anything else. Now there is.
 \end{enumerate}
 
-The short answers are yes, yes, and no. The rest of this paper explains how I got there, including the parts that
-did not go the way I expected.
+% =====================================================================
+\begin{center}
+\vspace{6pt}{\Large\bfseries Part I: Background and Version 1}\vspace{4pt}
+\end{center}
+% =====================================================================
 
-% ---------------------------------------------------------------------
-\section{A Quick Recap of Version 1}
-% ---------------------------------------------------------------------
-The HFRI is built from five indicators:
+\section{What Is Financial Resilience?}
+\subsection{A definition}
+In this research, financial resilience means \emph{the ability of a household to absorb a financial shock and still pay
+for the things it needs}. A \emph{shock} is any sudden event that hurts a family's finances: losing a job, a pay cut, a
+medical emergency, a car breaking down, or prices rising quickly. A \emph{household} simply means the people who live
+together and share their money, usually a family.
+
+A resilient household bends but does not break. It might have to cut back for a few months, but it keeps paying rent,
+buying food and repaying its loans on time. A household with low resilience breaks quickly: it starts missing payments,
+borrows at very high interest rates, or has to sell things it needs.
+
+\subsection{Why income alone is not enough}
+The most obvious way to judge whether a family is financially safe is to look at how much it earns. But income only
+tells you how much money comes \emph{in}. It does not tell you:
+\begin{itemize}
+\item how much goes back \emph{out} every month on spending;
+\item how much has been saved up for a bad day;
+\item how much is owed to banks and lenders, and how much of each month's income is already promised to repayments; or
+\item whether the family's spending is predictable, or jumps around from month to month.
+\end{itemize}
+A family earning a lot but spending all of it, with large loans, can be far more fragile than a family earning less
+but living well within its means. This is why financial resilience has to be measured using several pieces of
+information at once.
+
+\subsection{How others have measured it}
+Researchers, banks and governments have each looked at one or two pieces of this puzzle.
+
+\textbf{Emergency savings.} The most common idea is to check whether a family has enough cash to live on for a few
+months if its income stops. The U.S.\ Federal Reserve often uses three months of spending as a benchmark and has found
+that only around 40\pct{} of American families had that much in easily available savings \cite{bhutta2018,bhutta2021,fed2026}.
+The OECD and the JPMorgan Chase Institute have reached similar conclusions about how important cash buffers are
+\cite{oecd2024,jpmc2015,jpmc2019}.
+
+\textbf{The ONS measure.} The United Kingdom's Office for National Statistics (ONS) asks a very specific question: if
+this household's income fell by a quarter for three months, would its savings cover the gap \cite{ons}? This is a clear
+and practical test, and it was the main benchmark I used in Version~1.
+
+\textbf{Debt burdens.} Central banks watch household debt closely. One common measure is how much a household owes
+compared with its yearly income. The Bank of Canada treats households owing more than 3.5 times their yearly income as
+highly indebted \cite{boc}, and other central banks use similar reference points \cite{bis_ifc,apra,fca}. Another measure
+is how much of each month's income goes on loan repayments. Research from the Bank of England suggests that problems
+rise sharply once repayments take more than about 35--40\pct{} of income \cite{boe2019,boe2022,bis_dsr}.
+
+\textbf{Spending volatility.} Some research looks at how much a family's spending jumps around. Large, unexpected jumps
+in spending can strain a family even if its average spending is fine \cite{jpmc2017,greig,fisher,chakrabarty}.
+
+\textbf{Saving habits.} Finally, there is the question of whether a family saves part of its income each month at
+all. Governments track this as the saving rate \cite{oecd_sav,bea1,bea2,nyfed}, and financial advisers commonly
+recommend saving somewhere between 12\pct{} and 20\pct{} of income \cite{vanguard,fidelity1,fidelity2,sc,bcg}.
+
+Each of these measures is useful, but each one looks at only one side of a family's finances. A family can pass the
+savings test while drowning in debt, or have no debt while saving nothing. That gap is where the HFRI comes in.
+
+\takeaway{Financial resilience is about surviving a shock, not about income. Existing measures each capture one piece
+of it. The HFRI was designed to bring the main pieces together into one score.}
+
+\section{How the HFRI Was Built (Version 1)}
+\subsection{The four parts}
+The HFRI looks at a household from four different angles. I call these the four \emph{dimensions} of the index.
+
+\textbf{1. Savings Strength: does the family spend less than it earns?} This is measured by the \emph{savings rate}:
+the share of income left over after spending.
 \[
-SR=\frac{Y-C}{Y},\qquad DTI=\frac{Db}{Y},\qquad DSTI=\frac{DS}{Y},\qquad EC=\frac{L}{C_{essential,m}},\qquad CV=\frac{\sigma_C}{\bar C}
+\text{Savings rate} = \frac{\text{Income} - \text{Spending}}{\text{Income}}
 \]
-where $Y$ is annual disposable income, $C$ is annual expenditure, $Db$ is outstanding debt, $DS$ is annual debt
-repayments, $L$ is liquid savings, $C_{essential,m}$ is monthly essential spending, and $\sigma_C/\bar C$ is the
-coefficient of variation of monthly spending (how much spending jumps around from month to month).
+If a family earns Rs.\ 50,000 a month and spends Rs.\ 45,000, its savings rate is 10\pct. If it spends more than it
+earns, the savings rate is negative.
 
-Each indicator is turned into a 0--100 score, where higher always means more resilient. The functions are the
-same ones calibrated in Version~1 and are not changed in this paper:
-\begin{align*}
-S &= 100\left(1-e^{-5.89681(SR+0.10)}\right)\ \text{ for } SR>-0.10,\ \text{ and } 0 \text{ otherwise}\\
-D_{DTI} &= 100\,e^{-0.0573534\,DTI^{2.13509}}\\
-D_{DSTI} &= -521.45598\,DSTI^2 + 9.08245\,DSTI + 100.00523 \quad (\text{bounded to } 0\text{--}100)\\
-D &= 0.40\,D_{DTI} + 0.60\,D_{DSTI}\\
-E &= 100\left(1-e^{-0.37028\,EC^{0.901391}}\right), \qquad
-X = 100\,e^{-3.13957\,CV^{1.30837}}
-\end{align*}
-The calibration points behind these curves came from savings guidance \cite{vanguard,fidelity1,sc}, debt-burden
-evidence from central banks and regulators \cite{boc,bis_ifc,boe2019,boe2022,fca,apra,bis_dsr}, emergency-savings
-research \cite{bhutta2018,bhutta2021,fed2026,oecd2024,jpmc2015,jpmc2019} and spending-volatility research
-\cite{greig,jpmc2017,fisher,chakrabarty}. The interactive versions are on Desmos \cite{desmos1,desmos2,desmos3,desmos4,desmos5}.
-Figure~\ref{fig:curves} shows all five.
+\textbf{2. Debt Sustainability: are the family's loans manageable?} Debt causes two different kinds of pressure, so it
+is measured in two ways. The first is the total amount owed compared with yearly income, called the debt-to-income
+ratio. The second is how much of yearly income goes on loan repayments, called the debt-service-to-income ratio.
+\[
+\text{Debt-to-income} = \frac{\text{Total debt}}{\text{Yearly income}}, \qquad
+\text{Debt-service-to-income} = \frac{\text{Yearly loan repayments}}{\text{Yearly income}}
+\]
+A family can owe a lot but have small monthly repayments (a long home loan), or owe a little but have large monthly
+repayments (an expensive short-term loan). Both matter, so both are included.
+
+\textbf{3. Emergency Coverage: how long could the family survive on its cash?} This is the number of months of
+essential spending (rent, food, bills, loan repayments) that the family's easily available savings could pay for.
+\[
+\text{Emergency coverage} = \frac{\text{Cash savings}}{\text{Essential spending per month}}
+\]
+A value of 3 means the family could cover three months of essentials from its savings alone. Only cash and bank
+balances count here, not things like a house or jewellery, because those cannot be turned into money quickly.
+
+\textbf{4. Expense Stability: is the family's spending predictable?} This measures how much monthly spending jumps
+around compared with its average, using a measure called the \emph{coefficient of variation}. If a family spends
+almost the same amount every month, the value is close to 0. If its spending swings wildly, the value is large.
+
+Notice that Savings Strength and Emergency Coverage are different. Savings Strength is about the \emph{habit}: is
+money being put aside each month? Emergency Coverage is about the \emph{pile}: how much has already been put aside?
+A family that has just started saving has a good habit but a small pile.
+
+\subsection{Turning each measure into a score from 0 to 100}
+These measures are in completely different units: percentages, ratios and months. To combine them, each one is
+converted into a score from 0 to 100, where 100 always means ``very resilient'' and 0 always means ``very fragile''.
+
+To do this, I first chose a set of \emph{anchor points} based on the research described in Section~2. For example,
+for Emergency Coverage I decided that 0 months of savings should score 0, one month should score 30, three months
+should score 65 and six months should score 85. I then found a smooth mathematical curve that passes as close as
+possible to all of those points. This process is called \emph{calibration}. The interactive versions of all five
+curves are available on Desmos \cite{desmos1,desmos2,desmos3,desmos4,desmos5}, and Figure~\ref{fig:curves} shows them.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig01_scoring_curves.pdf}
-\caption{The five HFRI scoring functions from Version~1. They are unchanged in Version~2.}
+\caption{The five scoring curves from Version~1. Each turns a financial measure into a score from 0 to 100. These
+curves are not changed in Version~2.}
 \label{fig:curves}
 \end{figure}
 
-The original index was simply the average of the four dimensions:
+The curves all bend, and this is deliberate. Look at the Emergency Coverage curve: going from zero months to two months
+of savings raises the score a lot, but going from ten months to twelve barely changes it. That matches real life. The
+first few months of savings are what separate a family that survives a shock from one that does not. Extra months
+beyond that still help, but less and less. For reference, the exact formulas are:
+\begin{align*}
+\text{Savings score} &= 100\left(1-e^{-5.89681(\text{savings rate}+0.10)}\right)\ \ (\text{0 if the rate is } -10\pct \text{ or less})\\
+\text{Debt score} &= 0.40 \times 100\,e^{-0.0573534\,(\text{debt-to-income})^{2.13509}}\\
+&\quad + 0.60 \times \left(-521.456\,(\text{debt-service})^2 + 9.082\,(\text{debt-service}) + 100.005\right)\\
+\text{Emergency score} &= 100\left(1-e^{-0.37028\,(\text{months})^{0.901391}}\right)\\
+\text{Stability score} &= 100\,e^{-3.13957\,(\text{spending variation})^{1.30837}}
+\end{align*}
+The Debt score gives 60\pct{} of its weight to repayments and 40\pct{} to total debt, because a repayment that is
+due this month is a more immediate danger than a debt that is due over many years.
+
+\subsection{Putting the four scores together}
+Once a household has four scores, the HFRI is their weighted average. A \emph{weight} decides how much each part counts.
+In Version~1, every part counted equally:
 \[
-HFRI_{v1} = 0.25\,S + 0.25\,D + 0.25\,E + 0.25\,X.
+\text{HFRI}_{\text{Version 1}} = 0.25\times\text{Savings} + 0.25\times\text{Debt} + 0.25\times\text{Emergency} + 0.25\times\text{Stability}
 \]
-On the simulated households it had a mean of 75.84, a correlation of 0.8729 with the ONS-style benchmark
-\cite{ons}, and a sharp jump in shock survival around a score of 65--70.
+I chose equal weights on purpose. With no real-world data, I had no evidence that any one part mattered more than
+another, and giving them equal weight was the most neutral choice.
 
-\takeaway{Version~2 keeps every formula from Version~1. The only thing allowed to change is the weights, and only
-if real data gives a good reason.}
+\section{How Version 1 Was Tested}
+\subsection{A simulation}
+To test the index, I needed households. In Version~1, I created them with a computer program. This is called a
+\emph{simulation}. The program generated 1,000 imaginary households, each with its own income, spending, savings and
+loans, and then played out twelve months of their financial lives. Each month, income came in, spending and loan
+repayments went out, any surplus was added to savings, and any shortfall was taken from savings or borrowed. The
+program used a fixed starting number for its random choices (called a \emph{seed}; I used 42), which means anyone who
+runs it gets exactly the same 1,000 households.
 
-% ---------------------------------------------------------------------
-\section{Data: Where the Real Households Come From}
-% ---------------------------------------------------------------------
+\subsection{Comparing with the ONS measure and testing shocks}
+I then checked whether the HFRI agreed with the ONS test from Section~2.3: could each household's savings cover a 25\pct{}
+loss of income for three months? To measure agreement, I used a \emph{correlation}, a number between $-1$ and $+1$
+that shows how closely two things move together. A correlation of $+1$ means they move perfectly together, 0 means
+there is no connection, and $-1$ means they move in opposite directions.
+
+I also hit every household with two shocks, a 25\pct{} income cut for three months and a 25\pct{} rise in spending for
+three months, and checked which households survived using their own savings.
+
+\subsection{What Version 1 found}
+\begin{itemize}
+\item HFRI scores ranged from 16.27 to 97.24, with an average of 75.84.
+\item The correlation between the HFRI and the ONS test was 0.8729, which is very high.
+\item In the lowest quarter of HFRI scores, only 7.6\pct{} of households survived the income shock. In the other three
+quarters, 96\pct{} to 100\pct{} survived.
+\item Survival jumped sharply between scores of 65 and 70, which became the basis of a provisional set of score bands.
+\item Changing the weights moderately barely changed which households ranked high or low.
+\end{itemize}
+
+\section{What Version 1 Could Not Tell Us}
+Version~1 showed that the HFRI was \emph{logical}: higher scores went with more savings, lighter debt and better shock
+survival. But it left five important gaps.
+\begin{enumerate}
+\item \textbf{The households were not real.} I designed them, so they could only behave the way my program allowed.
+\item \textbf{There was no real-world trouble to check against.} No simulated family ever actually missed a payment or
+went bankrupt in the way real families do.
+\item \textbf{The ONS comparison was partly circular.} Both the HFRI and the ONS test depend heavily on cash savings, so
+some agreement between them was always expected.
+\item \textbf{The weights were a guess.} Equal weights were neutral, but there was no evidence that they were right.
+\item \textbf{The bands were provisional.} The 65--70 threshold came from simulated households, not real ones.
+\end{enumerate}
+Version~2 is designed to close each of these gaps.
+
+\takeaway{Version~1 proved that the HFRI is well built. It did not prove that it is right. For that, we need real
+families and real financial trouble.}
+
+% =====================================================================
+\begin{center}
+\vspace{6pt}{\Large\bfseries Part II: Testing the HFRI on Real Families}\vspace{4pt}
+\end{center}
+% =====================================================================
+
+\section{The Real Data}
 \subsection{The Survey of Consumer Finances}
-To test the HFRI properly, I needed a dataset that records, for the same household, everything the index needs
-(income, spending, debt, repayments and liquid savings) \emph{and} independent signs of financial trouble. Very few
-datasets do both. The Survey of Consumer Finances (SCF), run every three years by the U.S.\ Federal Reserve Board,
-is one of the best in the world for this \cite{scf2025,scf2022}. It is free, public and very detailed.
+To test the HFRI properly, I needed a dataset that does two things at once. It must record everything the index needs
+(income, spending, savings, debt and repayments) for each family. And it must separately record whether that family
+was in financial trouble. Very few datasets in the world do both.
 
-I used three SCF datasets (Table~\ref{tab:data}). The main test uses the newest survey, SCF 2025. SCF 2022 is used to
-check that the main result is not a one-off. The 2007--09 Panel is special: the Federal Reserve re-interviewed the
-same households in 2009 that it had first interviewed in 2007 \cite{bricker2011}. That means I can calculate an HFRI
-score from someone's finances in 2007 and see what actually happened to them during the 2008 financial crisis.
+One that does is the \textbf{Survey of Consumer Finances (SCF)}, run every three years by the Federal Reserve, the
+central bank of the United States \cite{scf2025,scf2022}. Interviewers sit down with thousands of families and ask
+detailed questions about their money. The results are published free online, with names and identifying details
+removed. I used three SCF datasets:
+\begin{itemize}
+\item \textbf{SCF 2025} (4,360 families): the most recent survey. This is the main test.
+\item \textbf{SCF 2022} (4,595 families): an earlier survey, used to check that the results are not a one-off.
+\item \textbf{The 2007--09 Panel} (3,857 families): a special survey in which the Federal Reserve interviewed the
+\emph{same} families twice, once in 2007 and again in 2009 \cite{bricker2011}. Between those two interviews came the
+2008 global financial crisis. This lets me calculate a family's score using its finances in 2007, and then see what
+actually happened to it during the crisis.
+\end{itemize}
 
-\begin{table}[H]
-\centering\small
-\caption{Datasets used in this paper. All are public summary extracts from the Federal Reserve Board.}
-\label{tab:data}
-\setlength{\tabcolsep}{4pt}\begin{tabular}{lrll}
-\toprule
-Dataset & Households & Used for & SHA-256 (first 16 characters)\\
-\midrule
-SCF 2025 & 4,360 & Main test: distress \emph{now} & \texttt{8f6de8f528de484e}\\
-SCF 2022 & 4,595 & Replication & \texttt{ddc45f83327dfb2f}\\
-Panel SCF 2007--09 & 3,857 & Prediction: distress \emph{later} & \texttt{e6a692ac3a0cb35e}\\
-Simulation (Version 1) & 1,000 & Link back to Version~1 & seed 42\\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Two things to know about how the survey works}
+\textbf{Not every family counts the same.} The SCF deliberately interviews more wealthy families than a random sample
+would, because wealth is concentrated in a small number of households and is otherwise hard to measure. To correct for
+this, every family in the survey comes with a number called a \emph{survey weight}, which says how many real American
+families it stands for. A family with a weight of 30,000 represents 30,000 similar families across the country. Every
+average and every test in this paper uses these weights. Without them, the results would describe the people who
+happened to be interviewed, not the country.
 
-The SHA-256 code is a file's ``fingerprint''. If even one number in the file changes, the fingerprint changes
-completely. Listing it means anyone can confirm they are using the exact same files I did.
+\textbf{Every family appears five times.} Sometimes people refuse to answer a question, or do not know the answer.
+Instead of leaving a blank, the Federal Reserve fills in a careful estimate based on similar families. Because any
+single estimate could be off, it makes five different estimates, so every family appears five times in the data, once
+with each estimate \cite{kennickell1998}. The correct way to handle this is to run every calculation five times, once
+for each version, and then combine the five answers \cite{rubin1987}. I do this for every result in this paper.
 
-\subsection{Two things you need to know about the SCF}
-\textbf{Survey weights.} The SCF deliberately interviews more wealthy households than a random sample would, because
-wealth is concentrated and hard to measure otherwise. To correct for this, every household has a \emph{weight}: the
-number of real American households it represents. A household with a weight of 30,000 counts 30,000 times as much as
-a household with a weight of 1. Every average and every test in this paper uses these weights. Without them, the
-results would describe the SCF sample, not the United States.
-
-\textbf{Implicates.} When people refuse to answer a question (``How much is in your savings account?''), the Federal
-Reserve does not leave a blank. It makes five educated guesses, so every household appears five times in the data,
-once for each guess. These five copies are called \emph{implicates} \cite{kennickell1998}. The correct approach is to run every
-calculation five times, once per implicate, and then average the results. For regressions, the five answers are
-combined using Rubin's rules, which add an extra allowance for uncertainty caused by the missing answers
-\cite{rubin1987}. I do this throughout.
-
-\subsection{Turning survey answers into HFRI inputs}
-The SCF does not ask every question in exactly the form the HFRI needs, so some inputs have to be built from the
-closest available answers. Table~\ref{tab:mapping} shows exactly how. I want to be upfront: three of these are
-\emph{proxies}, meaning reasonable stand-ins rather than exact measurements.
+\subsection{Building the HFRI from survey answers}
+The survey does not ask every question in exactly the form the HFRI needs, so some measures had to be built from the
+closest available answers. Table~\ref{tab:mapping} shows exactly how. Where the survey did not have the exact
+information, I used a \emph{proxy}, meaning a reasonable stand-in. I want to be clear about where this happened,
+because it affects how much we can trust each part.
 
 \begin{table}[H]
 \centering\small
-\caption{How each HFRI input was measured. SCF variable names are in capitals.}
+\caption{How each HFRI measure was built from the survey.}
 \label{tab:mapping}
-\begin{tabular}{>{\raggedright}p{2.6cm}>{\raggedright}p{6.3cm}>{\raggedright\arraybackslash}p{5.2cm}}
+\begin{tabular}{>{\raggedright}p{3cm}>{\raggedright}p{5.8cm}>{\raggedright\arraybackslash}p{5.4cm}}
 \toprule
-Input & SCF 2025 & 2007 Panel\\
+Measure & SCF 2025 & 2007--09 Panel\\
 \midrule
-Income $Y$ & INCOME minus an approximate tax rate (8\pct{} to 32\pct{} by income band) & Same, INCOME07\\
-Spending $C$ & Non-housing spending TOTSPENDNH + 12$\times$RENT + 12$\times$TPAY & Not recorded\\
-Savings rate $SR$ & $(Y-C)/Y$ & \textbf{Proxy:} ``did you spend more than, about the same as, or less than your income?'' mapped to $-5\pct$, $0\pct$, $+10\pct$\\
-Debt, repayments & DEBT; $12\times$TPAY & DEBT07; $12\times$TPAY07\\
-Liquid savings $L$ & LIQ (cash, checking, savings, money market) & LIQ07\\
-Essential spending & RENT + TPAY + 60\pct{} of non-housing spending & \textbf{Proxy:} 70\pct{} of monthly income\\
-Spending CV & \textbf{Proxy:} EXPENSHILO (spending normal / unusually low / unusually high) mapped to 0.10 / 0.20 / 0.40 & Not recorded; weight shared out among the other three\\
+Income & Yearly income minus an estimated tax rate (8\pct{} to 32\pct{}, higher for higher incomes) & Same\\
+Spending & Recorded spending + rent + loan repayments & Not recorded\\
+Savings rate & Income minus spending, divided by income & \textbf{Proxy:} ``Did you spend more than, about the same as, or less than your income?'' (treated as $-5\pct$, $0\pct$ and $+10\pct$)\\
+Debt and repayments & Recorded directly & Recorded directly\\
+Cash savings & Cash, current accounts, savings accounts & Same\\
+Essential spending & Rent + loan repayments + 60\pct{} of other spending & \textbf{Proxy:} 70\pct{} of monthly income\\
+Spending stability & \textbf{Proxy:} ``Was your spending normal, unusually low, or unusually high this year?'' & Not recorded, so the other three parts share its weight\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{What counts as ``financial trouble''?}
-An index is only as good as what you test it against. I used outcomes that the household \emph{reports} and that are
-\emph{not} part of the HFRI formula, so the test is not circular (Table~\ref{tab:outcomes}).
+\subsection{What counts as financial trouble?}
+To test the index, I needed signs of real financial trouble that the families reported themselves. Crucially, none of
+these is part of the HFRI calculation, so the test is not circular: the index does not ``know'' the answer in advance.
+Table~\ref{tab:outcomes} lists them, along with how common each one is across American families.
 
 \begin{table}[H]
 \centering\small
-\caption{Distress outcomes. Rates are survey-weighted shares of U.S.\ households.}
+\caption{Signs of financial trouble used to test the HFRI.}
 \label{tab:outcomes}
-\begin{tabular}{llr}
+\begin{tabular}{>{\raggedright}p{3.8cm}>{\raggedright}p{8.6cm}r}
 \toprule
-Outcome & Meaning & Rate\\
+Sign of trouble & What it means & How common\\
 \midrule
-\multicolumn{3}{l}{\emph{SCF 2025: distress now}}\\
-60+ days late & Behind by 60 days or more on any loan payment in the past year & 8.2\pct\\
-Any late payment & Behind on any loan payment in the past year & 19.6\pct\\
-Payday loan & Took a payday loan in the past year & 2.6\pct\\
-Bankruptcy & Filed for bankruptcy in the past five years & 1.4\pct\\
-Denied or feared credit & Was refused credit, or did not apply because they expected refusal & 18.7\pct\\
+\multicolumn{3}{l}{\emph{SCF 2025: trouble now}}\\
+Badly behind on payments & Two months or more late on any loan payment in the past year & 8.2\pct\\
+Any late payment & Late on any loan payment in the past year & 19.6\pct\\
+Payday loan & Took a payday loan, a small emergency loan with extremely high interest & 2.6\pct\\
+Bankruptcy & Legally declared unable to pay debts in the past five years & 1.4\pct\\
+Refused credit & Was turned down for a loan, or did not apply because they expected to be refused & 18.7\pct\\
 \midrule
-\multicolumn{3}{l}{\emph{Panel 2007--09: distress later (only households not already in that situation in 2007)}}\\
-New 60+ days late & Not seriously late in 2007, but 60+ days late by 2009 & 6.9\pct\\
-New credit denial or fear & Not credit-constrained in 2007, but constrained by 2009 & 12.3\pct\\
+\multicolumn{3}{l}{\emph{2007--09 Panel: trouble later (only families who were fine in 2007)}}\\
+Newly behind on payments & Not badly behind in 2007, but badly behind by 2009 & 6.9\pct\\
+Newly refused credit & Not refused credit in 2007, but refused by 2009 & 12.3\pct\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\takeaway{The SCF lets me do something Version~1 never could: compare HFRI scores with real financial trouble that
-households actually reported, in a sample designed to represent an entire country.}
+\takeaway{For the first time, the HFRI can be compared with real financial trouble that real families reported, in
+surveys designed to represent an entire country.}
 
-% ---------------------------------------------------------------------
-\section{Methods: How I Tested the Index}
-% ---------------------------------------------------------------------
-\subsection{AUC: one number for ``does the index separate the two groups?''}
-The main measure in this paper is the \textbf{AUC} (Area Under the ROC Curve) \cite{hanley1982,fawcett2006}. It sounds
-scary, but the idea is simple. Pick one household that is in trouble and one that is not, at random. The AUC is the
-probability that the household in trouble has the \emph{lower} HFRI score.
+\section{How to Judge Whether an Index Works}
+\subsection{The main test: does it rank families correctly?}
+Suppose we line up every family by its HFRI score. If the index works, the families in trouble should be bunched up at
+the low end. To turn this into a single number, I use a measure called the \textbf{AUC} \cite{hanley1982,fawcett2006}.
+The easiest way to understand it is as a game:
+\begin{quote}
+Pick one family that is in trouble and one family that is not, at random. Did the family in trouble get the lower
+score? Repeat this for every possible pair of families. The AUC is the share of pairs where the index got it right.
+\end{quote}
+An AUC of 0.5 means the index gets it right only half the time, which is no better than flipping a coin. An AUC of
+1.0 means it gets every single pair right, which never happens with real people. As a rough guide, an AUC above 0.7 is
+considered acceptable and above 0.8 is considered excellent \cite{hosmer2013}. Real-world financial data is messy, so
+an AUC in the 0.7s is a genuinely useful result.
+
+\subsection{How sure can we be?}
+Any result based on a sample of families would come out a little differently if we had interviewed a different sample.
+So we need to know how much our results could wobble. I used a method called the \textbf{bootstrap} \cite{efron1993}.
+The computer creates a new, reshuffled version of the data by picking families at random from the real data (some get
+picked twice, some not at all) and recalculates everything. It does this 400 times.
+
+From those 400 repeats come two useful numbers:
 \begin{itemize}
-\item AUC $=0.5$ means the index is no better than a coin flip.
-\item AUC $=1.0$ means it ranks every struggling household below every stable one. That never happens with real people.
-\item In practice, 0.7 is generally considered acceptable and 0.8 is considered excellent \cite{hosmer2013}.
+\item A \textbf{95\pct{} confidence range}: the range that 95\pct{} of the repeats fall into. If the range is narrow,
+the result is precise.
+\item A \textbf{$p$-value}: when comparing two versions of the index, this is roughly how often the supposedly better
+version actually lost across the repeats. A $p$-value below 0.05 is the usual standard for saying a difference is real
+rather than luck. Because there are 400 repeats, the smallest value I can report is under 0.01.
 \end{itemize}
-The nice thing about the AUC is that it does not depend on choosing a cut-off like ``below 60 is bad''. It judges the
-whole ranking at once.
 
-\subsection{Bootstrap: how sure am I?}
-Any number calculated from a sample would come out slightly differently with a different sample. To measure that
-wobble, I use the \textbf{bootstrap} \cite{efron1993}. I create a new ``fake'' sample by drawing households at random
-from the real sample with replacement (so some households appear twice and some not at all), and recalculate the AUC.
-I repeat this 400 times. The middle 95\pct{} of those 400 answers is the \emph{95\pct{} confidence interval}. When I
-compare two versions of the index, I compare them on the same 400 resamples, and the $p$-value is how often the
-supposedly better version actually loses. With 400 resamples, the smallest $p$-value I can report is about 0.0025, so
-I simply write $p<0.01$.
+\subsection{Testing each part while holding the others steady}
+The four parts of the HFRI are connected. For example, families with high savings also tend to have lighter debt. So
+if savings looks important, is it really savings, or is it the debt that comes with it? To separate them, I used a
+standard statistical method called \textbf{logistic regression}. In simple terms, it looks at all four parts at once and
+measures the effect of each one \emph{while holding the other three steady}.
 
-\subsection{Logistic regression and odds ratios}
-To ask whether a dimension matters \emph{after accounting for the others}, I use logistic regression, a standard
-model for yes/no outcomes. Its results are reported as \textbf{odds ratios} per 10 points. An odds ratio of 0.75 means
-that every extra 10 points on that dimension cuts the odds of the outcome by 25\pct{}, holding the other dimensions
-fixed. An odds ratio of 1 means no effect.
+Its results are about the \emph{odds} of trouble. Odds compare the chance of something happening with the chance of it
+not happening. I report the results in the simplest form possible: \emph{how much do the odds of trouble change when a
+score goes up by 10 points?} For example, ``$-25\pct$'' means that every extra 10 points on that part cuts the odds of
+trouble by a quarter.
 
-\subsection{Choosing weights fairly}
-Here is where it gets interesting. If I only tried to predict distress \emph{today} using SCF 2025, I could make the
-AUC look great, but I might just be describing households that are already in trouble. So I scored every set of
-weights on two things at once:
+\subsection{Testing now and later}
+Finally, I judged every version of the index on two jobs:
 \begin{itemize}
-\item \textbf{Now:} the average AUC across the five current-distress outcomes in SCF 2025.
-\item \textbf{Future:} the average AUC across the two new-distress outcomes in the 2007--09 Panel.
+\item \textbf{Now:} how well it recognises families who are in trouble today (the five signs in SCF 2025).
+\item \textbf{Later:} how well a family's 2007 score predicts trouble by 2009 (the two signs in the Panel).
 \end{itemize}
-The quantity I maximise is the simple average of the two, which I call the \textbf{combined} AUC. Weights are tested
-in three ways: a ``dial'' that moves only the Emergency weight from 0\pct{} to 100\pct{} in 1\pct{} steps; every
-possible combination of the four weights in 5\pct{} steps (1,770 combinations); and a 1\pct{} grid around the best
-area (3,971 combinations).
+A good index should be able to do both.
 
-\subsection{The held-out test: am I just fooling myself?}
-There is a trap in choosing the weights that score best on the data: of course they score best on \emph{that} data.
-This is called overfitting, and it is the most common way that researchers fool themselves \cite{hastie2009}.
+\takeaway{The AUC measures how well the index ranks families. The bootstrap tells us how sure we can be. Logistic
+regression tells us which parts matter on their own.}
 
-So I ran a held-out test. I split the households randomly into two halves. Using only the first half, I searched all
-1,770 weight combinations and picked the best one. Then I graded that choice on the second half, which the search
-had never seen. I repeated this with 10 different random splits. If the method were just fitting noise, the chosen
-weights would jump around wildly and would not beat the original on unseen households.
-
-\takeaway{AUC tells me how well the index ranks households, the bootstrap tells me how sure I can be, and the
-held-out test tells me whether the new weights would work on households they were not chosen on.}
-
-% ---------------------------------------------------------------------
 \section{Results}
-% ---------------------------------------------------------------------
-\subsection{Does the original HFRI work on real households?}
-Yes, and quite clearly. Figure~\ref{fig:deciles} splits SCF 2025 households into ten equal groups by HFRI score.
-In the lowest tenth, 20.9\pct{} of households were 60+ days late on a payment. The rate falls almost every step of the
-way, to 3.3\pct{} in the seventh tenth and 0.0\pct{} in the highest. Nobody in the top tenth was seriously late.
+\subsection{Does the original HFRI work on real families?}
+Yes. Figure~\ref{fig:deciles} shows the clearest way to see it. I split the families in SCF 2025 into ten equal groups,
+from the lowest HFRI scores to the highest, and checked what share of each group was badly behind on payments.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.78\textwidth]{fig03_deciles.pdf}
-\caption{Share of households 60+ days late on a payment, by HFRI decile (SCF 2025, survey-weighted).}
+\caption{Share of families badly behind on payments in each tenth of HFRI scores (SCF 2025). Group 1 has the lowest
+scores, group 10 the highest.}
 \label{fig:deciles}
 \end{figure}
 
-The original HFRI's AUC was 0.736 for serious delinquency and between 0.673 and 0.731 for the other outcomes
-(Table~\ref{tab:aucnow}). It also survived a tougher test: even after controlling for income, age, number of children
-and marital status in a logistic regression, every 10 extra HFRI points cut the odds of being 60+ days late by about
-30\pct{} (odds ratio 0.697, 95\pct{} CI 0.650--0.747, $p<0.001$). So the HFRI is not just a disguised measure of how
-rich someone is. In fact, income alone had an AUC of only 0.669.
+In the lowest group, 20.9\pct{} of families (about one in five) were badly behind. The share falls almost every step of
+the way: 11.6\pct{} in group 3, 7.5\pct{} in group 5, 3.3\pct{} in group 7, and 0.0\pct{} in group 10. Not a single family
+in the top tenth was badly behind on a payment.
 
-The result also replicates. In SCF 2022, which has no total-spending data, I could only build Debt and Emergency.
-Their average still reached an AUC of 0.734.
+In the ranking game, the original HFRI scored an AUC of 0.736 for being badly behind on payments, and between 0.67 and
+0.73 for the other four signs of trouble (Table~\ref{tab:aucnow}).
+
+There is an obvious worry here: maybe the HFRI is just a disguised measure of how rich a family is. To check this, I
+used logistic regression to hold steady each family's income, age, number of children and marital status. Even then,
+every extra 10 points on the HFRI cut the odds of being badly behind by about 30\pct. Income on its own scored an AUC of
+only 0.669, lower than the HFRI. So the HFRI is measuring something that income alone does not.
+
+The result also holds in a different year. In SCF 2022, which does not record total spending, I could only build the
+Debt and Emergency parts. Even these two alone scored an AUC of 0.734.
 
 \begin{table}[H]
 \centering\small
-\caption{AUC for current distress in SCF 2025 (95\pct{} bootstrap confidence intervals). Higher is better.}
+\caption{AUC for trouble now (SCF 2025). Higher is better; 0.5 is a coin flip.}
 \label{tab:aucnow}
-\setlength{\tabcolsep}{3pt}\begin{tabular}{lcccc}
+\begin{tabular}{lccc}
 \toprule
-Outcome & Original (25 each) & Final (5/30/55/10) & E only & Final $-$ original\\
+Sign of trouble & \shortstack{Original HFRI\\(25/25/25/25)} & \shortstack{Revised HFRI\\(5/30/55/10)} & \shortstack{Emergency\\savings alone}\\
 \midrule
-60+ days late & 0.736 [0.707, 0.763] & 0.763 [0.739, 0.790] & 0.759 & $+0.028$, $p<0.01$\\
-Any late payment & 0.731 [0.710, 0.750] & 0.763 [0.745, 0.784] & 0.748 & $+0.033$, $p<0.01$\\
-Payday loan & 0.702 [0.656, 0.750] & 0.752 [0.711, 0.800] & 0.794 & $+0.050$, $p<0.01$\\
-Bankruptcy & 0.673 [0.585, 0.748] & 0.746 [0.668, 0.816] & 0.746 & $+0.073$, $p<0.01$\\
-Denied or feared credit & 0.706 [0.683, 0.727] & 0.734 [0.710, 0.756] & 0.742 & $+0.028$, $p<0.01$\\
+Badly behind on payments & 0.736 & 0.763 & 0.759\\
+Any late payment & 0.731 & 0.763 & 0.748\\
+Payday loan & 0.702 & 0.752 & 0.794\\
+Bankruptcy & 0.673 & 0.746 & 0.746\\
+Refused credit & 0.706 & 0.734 & 0.742\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\takeaway{The original HFRI does what it was designed to do. Real households with low scores are far more likely to
-be in financial trouble, and the effect holds after accounting for income and family characteristics.}
+\takeaway{The original HFRI works on real families. The lower the score, the more likely a family is to be in trouble,
+and this holds even after accounting for income.}
 
-\subsection{Which dimension drives distress today?}
-Next, I scored households on each dimension \emph{on its own}. For serious delinquency, Emergency Coverage alone had an
-AUC of 0.759, Savings Strength 0.666, Debt Sustainability 0.637 and Expense Stability 0.560. Emergency Coverage
-alone was actually better than the full original index (0.736).
+\subsection{Which part matters most right now?}
+Next, I tested each of the four parts \emph{on its own}. For being badly behind on payments, Emergency Coverage alone
+scored an AUC of 0.759, Savings Strength 0.666, Debt Sustainability 0.637 and Expense Stability 0.560. Emergency
+Coverage on its own was actually better than the full original index.
 
-Table~\ref{tab:dims} puts all four dimensions into one regression, so each one is judged after accounting for the
-others. Emergency Coverage is by far the strongest: every extra 10 points cuts the odds of serious delinquency by
-about a quarter (odds ratio 0.755). But it is not the only one that matters. Savings, Debt and Stability are
-all statistically significant for serious delinquency too.
+Table~\ref{tab:dims} shows what happens when all four parts are tested together, each one held steady against the
+others. Emergency Coverage is by far the strongest. For being badly behind on payments, every extra 10 points on
+Emergency Coverage cut the odds by about a quarter. The other three parts still mattered, but much less.
 
 \begin{table}[H]
 \centering\small
-\caption{Odds ratio per 10 points, all four dimensions in one model (SCF 2025; $p$-values in brackets). Below 1 means
-the dimension protects against the outcome.}
+\caption{Change in the odds of trouble for every extra 10 points on each part, with all four tested together. A
+negative number means the part protects against trouble. A star (*) means the effect is very unlikely to be luck
+($p<0.05$).}
 \label{tab:dims}
-\setlength{\tabcolsep}{4pt}\begin{tabular}{lcccc}
+\begin{tabular}{lcccc}
 \toprule
-Outcome & Savings & Debt & Emergency & Stability\\
+Sign of trouble & Savings & Debt & Emergency & Stability\\
 \midrule
-60+ days late & 0.953 (0.002) & 0.951 (0.008) & 0.755 ($<$0.001) & 0.942 (0.036)\\
-Any late payment & 0.979 (0.089) & 0.914 ($<$0.001) & 0.768 ($<$0.001) & 0.953 (0.008)\\
-Payday loan & 0.987 (0.659) & 1.079 (0.035) & 0.695 ($<$0.001) & 0.875 (0.003)\\
-Bankruptcy & 1.040 (0.379) & 0.927 (0.064) & 0.736 ($<$0.001) & 1.021 (0.725)\\
-Denied or feared credit & 0.960 (0.002) & 1.005 (0.734) & 0.780 ($<$0.001) & 0.930 ($<$0.001)\\
+Badly behind on payments & $-5\pct$* & $-5\pct$* & $-25\pct$* & $-6\pct$*\\
+Any late payment & $-2\pct$ & $-9\pct$* & $-23\pct$* & $-5\pct$*\\
+Payday loan & $-1\pct$ & $+8\pct$* & $-31\pct$* & $-13\pct$*\\
+Bankruptcy & $+4\pct$ & $-7\pct$ & $-26\pct$* & $+2\pct$\\
+Refused credit & $-4\pct$* & $+1\pct$ & $-22\pct$* & $-7\pct$*\\
 \midrule
-\emph{Panel: new 60+ days late by 2009} & 0.962 (0.332) & \textbf{0.845} ($<$0.001) & 0.813 ($<$0.001) & --\\
+\emph{Panel: newly behind by 2009} & $-4\pct$ & $\mathbf{-16\pct}$* & $-19\pct$* & not measured\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-At this point, I honestly thought the answer was obvious: give Emergency Coverage most of the weight, maybe all of it.
-If I had stopped here, that is exactly what this paper would have recommended. It would have been wrong.
+At this point, the answer looked obvious: give Emergency Coverage most of the weight, maybe all of it. If I had stopped
+here, that is exactly what this paper would have recommended. It would have been a mistake.
 
-\takeaway{For distress \emph{today}, Emergency Coverage dominates. A household with cash in the bank is rarely behind
-on its payments.}
+\takeaway{For trouble right now, cash savings matter more than anything else. A family with money in the bank is rarely
+behind on its payments.}
 
-\subsection{The plot twist: predicting the future}
-Here is the problem with testing on SCF 2025 alone. Being behind on payments and having no savings happen
-\emph{together}. If you are late on your loans, you have probably already drained your savings account. So
-Emergency Coverage might look powerful partly because it is measuring the \emph{damage}, not predicting it.
+\subsection{The twist: predicting trouble before it happens}
+There is a hidden problem with testing only on families' current situations. Being behind on payments and having no
+savings tend to happen \emph{together}. If a family is already behind on its loans, it has probably already drained its
+savings trying to keep up. So Emergency Coverage might look powerful partly because it is measuring the \emph{damage},
+not predicting it. It is a bit like noticing that people with umbrellas are wet: the umbrella does not tell you who will
+get rained on tomorrow.
 
-The 2007--09 Panel fixes this. I scored households using their finances in 2007, before the crisis, and only looked
-at households that were \emph{not} already in trouble in 2007. Then I checked who fell into trouble by 2009.
+The 2007--09 Panel solves this. I took only the families who were \emph{not} in trouble in 2007, calculated their HFRI
+using their 2007 finances, and then checked who got into trouble by 2009, after the financial crisis hit.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{fig05_auc_future.pdf}
-\caption{AUC for new distress by 2009, using HFRI scores from 2007 (95\pct{} bootstrap confidence intervals).}
+\caption{How well each version, measured in 2007, predicted new trouble by 2009. Dots show the AUC; lines show the 95\pct{}
+confidence range.}
 \label{fig:future}
 \end{figure}
 
-The picture flipped (Figure~\ref{fig:future}). For new serious delinquency, the original equal-weight HFRI had an AUC
-of 0.725, while Emergency Coverage on its own managed only 0.657. The original beat Emergency-only by 0.068
-($p<0.01$). The same happened for new credit problems (0.692 vs 0.656, $p=0.04$). The bottom row of
-Table~\ref{tab:dims} shows why: in 2007, \textbf{Debt Sustainability} was the strongest predictor of who would later
-fall behind (odds ratio 0.845 per 10 points, $p<0.001$), even stronger than Emergency Coverage (0.813).
+This time, the result flipped (Figure~\ref{fig:future}). For families who became badly behind by 2009, the original HFRI
+scored an AUC of 0.725, but Emergency Coverage alone scored only 0.657. The full index beat Emergency Coverage alone
+by a clear margin ($p<0.01$). The same pattern held for families who were newly refused credit (0.692 against 0.656,
+$p=0.04$).
 
-This makes economic sense. A household with savings but heavy debt repayments is fine \emph{until} something goes
-wrong. When the shock comes (a job loss, a pay cut, a crisis like 2008), the savings run out and the repayments do not.
-Debt is a slow-moving risk. Savings are the first line of defence, but debt decides how long that defence lasts.
+The bottom row of Table~\ref{tab:dims} shows why. In 2007, \textbf{Debt Sustainability} was a powerful warning sign of
+future trouble. Every extra 10 points on the Debt score cut the odds of falling badly behind by 2009 by about
+16\pct, three times more than its effect on current trouble.
 
-\takeaway{Emergency Coverage explains who is struggling now. Debt explains who will struggle next. A good index
-needs both, and that rules out simply using Emergency Coverage on its own.}
+This makes sense economically. A family with some savings but heavy loan repayments looks fine \emph{until} something
+goes wrong. When a shock arrives (a job loss, a pay cut, a crisis like 2008), the savings run out but the repayments
+keep coming. Savings are the first line of defence. Debt decides how long that defence lasts.
 
-\subsection{Choosing the new weights}
-\textbf{The Emergency dial.} Figure~\ref{fig:dial} moves the Emergency weight from 0\pct{} to 100\pct{}, sharing the
-rest equally between the other three dimensions. The two goals pull in opposite directions. The ``now'' AUC keeps
-rising until Emergency has about 82\pct{} of the weight. The ``future'' AUC peaks at only 28\pct{}, almost exactly the
-original 25\pct. The combined AUC peaks at 51\pct.
+\takeaway{Cash savings explain who is in trouble now. Debt explains who will get into trouble next. A good index needs
+both, which is why simply using Emergency Coverage on its own would be a mistake.}
+
+\subsection{Searching for better weights}
+Since equal weights were only ever a starting guess, I tested other weights systematically. For each possible set of
+weights, I calculated two scores: the average AUC for trouble \emph{now} (across the five signs in SCF 2025) and the
+average AUC for trouble \emph{later} (across the two signs in the Panel). The overall score for that set of weights is
+simply the average of the two. I call this the \textbf{combined} score.
+
+\textbf{Step 1: turning one dial.} First, I changed only the Emergency weight, from 0\pct{} to 100\pct{} in steps of 1\pct,
+and shared the rest equally among the other three parts (Figure~\ref{fig:dial}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{fig06_emergency_dial.pdf}
-\caption{Average AUC as the Emergency Coverage weight changes, with the other three dimensions sharing the rest
-equally.}
+\caption{How well the index works as the Emergency weight changes. Blue: trouble now. Green: trouble later. Black: the
+average of the two.}
 \label{fig:dial}
 \end{figure}
 
-How sure is that 51\pct? I bootstrapped the whole search 200 times. The best combined Emergency weight had a median
-of 51\pct{} and a 95\pct{} range of 35\pct{} to 63\pct{}. So the data clearly says ``more than 25\pct'' and
-``well below 100\pct'', but it cannot pin the exact value down to the nearest percent. Anyone claiming that kind of
-precision would be fooling themselves.
+The two jobs pull in opposite directions. The ``now'' line keeps rising until Emergency has about 82\pct{} of the weight.
+The ``later'' line peaks at just 28\pct, very close to the original 25\pct. The combined line, which balances both,
+peaks at about 51\pct.
 
-\textbf{All four weights free.} The dial forces the other three dimensions to be equal. When I let all four move
-freely in 5\pct{} steps (Table~\ref{tab:grid}), a very clear pattern appears in every one of the top ten
-combinations: Debt stays at 25--35\pct, Emergency at 50--65\pct, and Savings and Stability get small weights.
+How precise is that 51\pct? Using the bootstrap, I repeated the entire search 200 times on reshuffled data. The best
+Emergency weight landed between 35\pct{} and 63\pct{} in 95\pct{} of the repeats. So the data clearly says that Emergency
+deserves much more than 25\pct{} and much less than 100\pct, but it cannot pinpoint the exact best value to the nearest
+percent. Claiming that kind of precision would be pretending to know more than the data can tell us.
+
+\textbf{Step 2: letting all four weights move.} The dial forced the other three parts to share equally. Next, I let all
+four weights move freely, in steps of 5\pct, which gives 1,770 possible combinations. I tested every single one.
+Table~\ref{tab:grid} shows the best five, with the original for comparison.
 
 \begin{table}[H]
 \centering\small
-\caption{Top weight combinations out of 1,770 (5\pct{} steps), ranked by combined AUC.}
+\caption{The five best weight combinations out of 1,770, ranked by the combined score.}
 \label{tab:grid}
 \begin{tabular}{rrrrccc}
 \toprule
-Savings & Debt & Emergency & Stability & Now & Future & Combined\\
+Savings & Debt & Emergency & Stability & Now & Later & Combined\\
 \midrule
-0\pct & 30\pct & 60\pct & 10\pct & 0.7542 & 0.7014 & 0.7278\\
-5\pct & 30\pct & 60\pct & 5\pct & 0.7535 & 0.7021 & 0.7278\\
-\textbf{5\pct} & \textbf{30\pct} & \textbf{55\pct} & \textbf{10\pct} & \textbf{0.7517} & \textbf{0.7037} & \textbf{0.7277}\\
-0\pct & 30\pct & 65\pct & 5\pct & 0.7557 & 0.6994 & 0.7276\\
-5\pct & 35\pct & 55\pct & 5\pct & 0.7477 & 0.7071 & 0.7274\\
+0\pct & 30\pct & 60\pct & 10\pct & 0.754 & 0.701 & 0.7278\\
+5\pct & 30\pct & 60\pct & 5\pct & 0.754 & 0.702 & 0.7278\\
+\textbf{5\pct} & \textbf{30\pct} & \textbf{55\pct} & \textbf{10\pct} & \textbf{0.752} & \textbf{0.704} & \textbf{0.7277}\\
+0\pct & 30\pct & 65\pct & 5\pct & 0.756 & 0.699 & 0.7276\\
+5\pct & 35\pct & 55\pct & 5\pct & 0.748 & 0.707 & 0.7274\\
 \midrule
-25\pct & 25\pct & 25\pct & 25\pct & 0.7094 & 0.7086 & 0.7090\\
+25\pct & 25\pct & 25\pct & 25\pct & 0.709 & 0.709 & 0.7090\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The 1\pct{} refinement found the exact best combination at Savings 2\pct, Debt 31\pct, Emergency 62\pct, Stability
-5\pct, with a combined AUC of 0.72804. The rounded combination 5/30/55/10 scores 0.72773. The difference is 0.0003,
-which is about a hundred times smaller than the bootstrap uncertainty. In other words, they are the same.
+A very clear pattern appears. In every one of the top ten combinations, Debt gets 25--35\pct, Emergency gets
+50--65\pct, and Savings and Stability get small weights. The top combinations are also extremely close to each other:
+the differences are in the fourth decimal place. Searching even more finely, in 1\pct{} steps, the single best
+combination was Savings 2\pct, Debt 31\pct, Emergency 62\pct{} and Stability 5\pct, with a combined score of 0.72804.
+The rounded combination 5/30/55/10 scored 0.72773. The gap between them is about a hundred times smaller than the
+natural wobble in the data, so for all practical purposes they are the same.
 
-\textbf{The held-out test.} Figure~\ref{fig:heldout} and Table~\ref{tab:heldout} show what happened when the weights
-were chosen on one half of the households and graded on the other. In all 10 splits, the chosen weights beat the
-original on the unseen half (average combined gain $+0.016$). The gain came entirely from the ``now'' side ($+0.041$,
-better in 10 of 10). On the ``future'' side, the chosen weights were slightly \emph{worse} than the original
-($-0.009$, better in only 3 of 10). That is the honest cost of the trade-off: the new weights give up a little future
-accuracy to gain a lot of present accuracy.
+\subsection{Making sure the new weights are not a fluke}
+There is a trap in what I just did. If you try 1,770 combinations and pick the one that scores best on your data, it
+will obviously look good \emph{on that data}. That is like setting your own exam and then marking it yourself. The real
+question is whether the chosen weights would still work on families they were never chosen on. When a method looks
+good only on the data it was tuned on, it is called \emph{overfitting} \cite{hastie2009}.
+
+To check this fairly, I ran a \textbf{held-out test}:
+\begin{enumerate}
+\item Split all the families randomly into two halves, A and B.
+\item Using \emph{only} half A, test all 1,770 combinations and pick the best one.
+\item Grade that choice on half B, which the search never saw.
+\item Repeat with ten different random splits.
+\end{enumerate}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.82\textwidth]{fig07_held_out.pdf}
-\caption{Held-out test: AUC gain of the chosen weights over the original weights, on households the search never saw.
-Each dot is one random split; the bar is the average.}
+\caption{The held-out test. Each dot is one random split. It shows how much better (right of the line) or worse (left
+of the line) the chosen weights did than the original equal weights, on families they were never chosen on. The black
+bar is the average.}
 \label{fig:heldout}
 \end{figure}
 
 \begin{table}[H]
 \centering\small
-\caption{Held-out test, 10 random half-splits. AUC on the unseen half, averaged across splits.}
+\caption{Held-out test, averaged over ten random splits. All scores are measured on the unseen half.}
 \label{tab:heldout}
-\setlength{\tabcolsep}{4pt}\begin{tabular}{lccccc}
+\begin{tabular}{lcccc}
 \toprule
- & Chosen weights & Original & Final 5/30/55/10 & Gain vs original & Splits better\\
+ & \shortstack{Weights chosen\\on half A} & \shortstack{Original\\(25/25/25/25)} & \shortstack{Revised\\(5/30/55/10)} & \shortstack{Times better\\than original}\\
 \midrule
-Now & 0.7500 & 0.7089 & 0.7536 & $+0.041$ & 10/10\\
-Future & 0.7048 & 0.7137 & 0.7080 & $-0.009$ & 3/10\\
-Combined & 0.7274 & 0.7113 & 0.7308 & $+0.016$ & 10/10\\
+Now & 0.750 & 0.709 & 0.754 & 10 of 10\\
+Later & 0.705 & 0.714 & 0.708 & 3 of 10\\
+Combined & 0.727 & 0.711 & 0.731 & 10 of 10\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The weights chosen across the ten splits were also stable: Savings 0--10\pct, Debt 20--35\pct, Emergency 45--70\pct{}
-and Stability 0--25\pct. On average, they came to \textbf{Savings 3.5\pct, Debt 30.5\pct, Emergency 56\pct{} and
-Stability 10\pct}.
+The new weights beat the original on unseen families in all ten splits (Figure~\ref{fig:heldout},
+Table~\ref{tab:heldout}). Almost all of that gain came from recognising trouble \emph{now}. For predicting trouble
+\emph{later}, the chosen weights were very slightly worse than the original (by about 0.01), winning in only three of
+the ten splits. That is the honest cost of the trade-off: the new weights give up a little accuracy about the future to
+gain a lot of accuracy about the present.
 
-\textbf{The final choice.} I chose:
+The weights chosen in each split were also very consistent: Savings 0--10\pct, Debt 20--35\pct, Emergency 45--70\pct{}
+and Stability 0--25\pct. On average across the ten splits, they came to \textbf{Savings 3.5\pct, Debt 30.5\pct,
+Emergency 56\pct{} and Stability 10\pct}.
+
+\subsection{The new weights}
 \begin{rqbox}
 \centering
-$HFRI_{v2} = 0.05\,S + 0.30\,D + 0.55\,E + 0.10\,X$
+$\text{HFRI}_{\text{Version 2}} = 0.05\times\text{Savings} + 0.30\times\text{Debt} + 0.55\times\text{Emergency} + 0.10\times\text{Stability}$
 \end{rqbox}
-Three reasons. First, it is in the top three of all 1,770 combinations and within 0.0003 of the exact best. Second, it
-is almost exactly the average that the held-out test chose (3.5 / 30.5 / 56 / 10), which makes it the most
-\emph{stable} choice rather than the luckiest one. Third, round 5\pct{} steps are easier to explain and harder to
-accuse of overfitting than 2\pct{} and 31\pct.
 
-\takeaway{The new weights roughly double Emergency Coverage, keep Debt strong, and shrink Savings and Stability. They
-improve present accuracy a lot and cost only a little future accuracy.}
+I chose 5/30/55/10 for three reasons. First, it is in the top three of all 1,770 combinations, and practically tied with
+the best. Second, it is almost exactly the average of the weights chosen in the ten fair tests (3.5 / 30.5 / 56 / 10),
+which makes it the most \emph{dependable} choice rather than the luckiest one. Third, round numbers in steps of 5\pct{}
+are easier to explain and use than 2\pct{} and 31\pct, and they avoid pretending to a precision the data does not have.
+
+\takeaway{The new weights more than double the importance of cash savings, keep debt strongly in the index, and reduce
+the weight on saving habits and spending stability. They are a balance between recognising trouble now and seeing it
+coming.}
 
 \subsection{Why keep Savings Strength at all?}
-A fair question: if Savings Strength only gets 5\pct, why not drop it? I tested this directly, and there are three
-reasons to keep it.
-\begin{enumerate}
-\item \textbf{It is not a copy of Emergency Coverage.} The correlation between the two was only 0.45 in 2025 and 0.27
-in 2007. Saving a lot every month and having a big cushion are different things.
-\item \textbf{It adds its own information.} In Table~\ref{tab:dims}, Savings Strength still lowers the odds of
-serious delinquency (0.953, $p=0.002$) and credit problems (0.960, $p=0.002$) \emph{after} Emergency, Debt and
-Stability are already in the model.
-\item \textbf{It is how a weak buffer gets rebuilt.} Among households with less than about one month of cover in 2007,
-34.6\pct{} of those spending less than their income had rebuilt their buffer to more than a month by 2009, compared
-with 24.1\pct{} of those spending more than their income (left of Figure~\ref{fig:savings}; $p=0.052$, so this is
-suggestive rather than conclusive).
-\end{enumerate}
+If Savings Strength only gets 5\pct, why not remove it completely? I tested this directly, and there are three reasons
+to keep it.
+
+\textbf{It is not a copy of Emergency Coverage.} The correlation between the two was only 0.45 in 2025 and 0.27 in 2007.
+Saving a part of your income each month and having a large cushion already in the bank are related, but different.
+
+\textbf{It adds information of its own.} Even with the other three parts held steady, every extra 10 points on Savings
+Strength cut the odds of being badly behind on payments by about 5\pct{} and the odds of being refused credit by about
+4\pct{} (Table~\ref{tab:dims}). Both effects were very unlikely to be luck.
+
+\textbf{It is how families rebuild.} Among families with less than about a month of savings in 2007, 34.6\pct{} of those
+who were spending less than they earned had built their cushion back up to more than a month by 2009. Among those
+spending more than they earned, only 24.1\pct{} had (Figure~\ref{fig:savings}, left). This difference is suggestive
+rather than certain ($p=0.052$, just above the usual 0.05 standard).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{fig09_savings.pdf}
-\caption{Left: share of low-buffer households in 2007 that rebuilt to at least one month of cover by 2009. Right: new
-serious delinquency by 2009, by 2007 saving behaviour and buffer.}
+\caption{Left: among families with very little savings in 2007, the share who rebuilt to at least one month by 2009.
+Right: the share newly behind on payments by 2009, by saving habit and by whether the family had a cushion in 2007.}
 \label{fig:savings}
 \end{figure}
 
-The right side of Figure~\ref{fig:savings} shows the most interesting pattern. Saving only really protected
-households that \emph{already had} a buffer: those who saved and had a cushion had just 3.2\pct{} new serious
-delinquency, compared with 8.7\pct{} for those with a cushion who were overspending. Without a cushion, saving alone
-was not enough to stop a crisis (11.5\pct). Savings Strength is a slow, long-run force, which is exactly why it
-deserves a small weight but not zero.
+The right side of Figure~\ref{fig:savings} shows something interesting. Saving helped most when a family \emph{already
+had} a cushion: families who were saving and had a cushion had only a 3.2\pct{} chance of falling badly behind by 2009,
+compared with 8.7\pct{} for families who had a cushion but were overspending. Without a cushion, saving alone was not
+enough to protect a family through the crisis (11.5\pct). In other words, Savings Strength works slowly. It builds
+protection over time rather than providing it instantly, which is exactly why it deserves a small weight, but not zero.
 
-\takeaway{Savings Strength earns its place. It is small in the index because its effect is slow, not because it does
-not matter.}
+\takeaway{Savings Strength stays in the index. Its weight is small because its effect is slow, not because it does not
+matter.}
 
-\subsection{Agreement with established benchmarks}
-The last check was whether the new index still agrees with how official bodies measure resilience. Table~\ref{tab:bench}
-summarises the comparison; Figure~\ref{fig:bench} in the appendix shows the group averages.
+\subsection{Does the new index agree with official measures?}
+A new index should still agree with the measures that governments and central banks already use.
+Table~\ref{tab:bench} compares the three versions against several of them. The numbers are AUCs, so higher means
+stronger agreement.
 
 \begin{table}[H]
 \centering\small
-\caption{AUC against established benchmarks and outcomes. ``ONS-style'' follows \cite{ons}; the Fed liquidity and
-40\pct{} payment measures follow \cite{bhutta2018}.}
+\caption{Agreement with official measures of financial health (AUC).}
 \label{tab:bench}
-\setlength{\tabcolsep}{4pt}\begin{tabular}{l>{\raggedright}p{7.3cm}ccc}
+\begin{tabular}{>{\raggedright}p{8.4cm}ccc}
 \toprule
-Data & Benchmark & Original & Final & Emergency only\\
+Official measure & Original & Revised & Emergency alone\\
 \midrule
-SCF 2025 & ONS-style resilient (savings cover 25\pct{} income loss for 3 months) & 0.776 & 0.909 & 0.977\\
-SCF 2025 & 3 months of spending in liquid savings (Fed) & 0.882 & 0.977 & 0.999\\
-SCF 2025 & Debt payments below 40\pct{} of income (Fed) & 0.932 & 0.894 & \textbf{0.687}\\
-SCF 2025 & Would cope with job loss using savings (self-reported) & 0.738 & 0.762 & 0.763\\
-2007 Panel & Debt payments below 40\pct{} of income & 0.895 & 0.790 & \textbf{0.506}\\
-\midrule
-Simulation & ONS-style resilient (Version 1) & 0.995 & 0.999 & 0.999\\
+ONS test: savings cover a 25\pct{} income loss for 3 months (SCF 2025) & 0.776 & 0.909 & 0.977\\
+Federal Reserve: 3 months of spending in savings (SCF 2025) & 0.882 & 0.977 & 0.999\\
+Federal Reserve: loan repayments below 40\pct{} of income (SCF 2025) & 0.932 & 0.894 & \textbf{0.687}\\
+Family says it could cope with a job loss using savings (SCF 2025) & 0.738 & 0.762 & 0.763\\
+Loan repayments below 40\pct{} of income (2007 Panel) & 0.895 & 0.790 & \textbf{0.506}\\
+ONS test on the Version~1 simulated households & 0.995 & 0.999 & 0.999\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The final index is the most \emph{balanced}. It agrees strongly with savings-based benchmarks (0.909 to 0.977) and
-still recognises households with dangerous debt burdens (0.894). Emergency-only fails that debt test badly: in 2007 it
-was a coin flip (0.506). On the Version~1 simulation, every version scores 0.995 or higher. The simulation is too
-``clean'' to tell the weights apart, which is itself a good reason why real data was needed.
+The revised index is the most balanced. It agrees strongly with the savings-based measures (0.909 and 0.977) and still
+recognises families with dangerous debt burdens (0.894). Emergency savings alone fails badly on debt: in 2007 it was no
+better than a coin flip (0.506). On the Version~1 simulated households, every version scores above 0.99. The simulation
+is simply too tidy to tell the versions apart, which is itself a strong reason why real data was needed.
 
-\takeaway{The final HFRI is the only version that is strong on liquidity benchmarks \emph{and} still recognises
-heavy debt burdens.}
-
-\subsection{New interpretation bands}
-In Version~1, the bands came from simulated shock survival, and I said they were provisional until tested on real
-outcomes. Now they can be calibrated properly. I fitted a smooth curve of the probability of being 60+ days late
-against the final HFRI score, and placed the cut-offs where the risk falls to twice the national average (8.2\pct),
-to the average, and to half the average, rounded to the nearest 5 (Figure~\ref{fig:bands}).
+\subsection{New score bands}
+In Version~1, the score bands came from simulated households and were labelled provisional. Now they can be based on
+real outcomes. I drew a smooth curve showing the chance of being badly behind on payments at each HFRI score
+(Figure~\ref{fig:bands}). The average American family has an 8.2\pct{} chance. I placed the band boundaries where the
+risk falls to twice the average, to the average, and to half the average, rounded to the nearest 5.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{fig10_bands.pdf}
-\caption{Fitted probability of being 60+ days late against the final HFRI (SCF 2025), with the band cut-offs.}
+\caption{The chance of being badly behind on payments at each revised HFRI score (SCF 2025), with the band boundaries.}
 \label{fig:bands}
 \end{figure}
 
 \begin{table}[H]
 \centering\small
-\caption{Interpretation bands for the final HFRI. The last column is the out-of-time check on the 2007--09 Panel.}
+\caption{The new HFRI score bands. The last column checks the bands on completely different families and years.}
 \label{tab:bands}
 \begin{tabular}{llccc}
 \toprule
-HFRI & Band & Share of households & 60+ days late (2025) & New 60+ days late by 2009\\
+Score & Band & Share of families & Badly behind (2025) & Newly behind by 2009\\
 \midrule
 0--35 & High risk & 13.4\pct & 20.8\pct & 15.1\pct\\
 35--55 & Elevated risk & 30.0\pct & 12.6\pct & 8.4\pct\\
@@ -603,81 +775,102 @@ HFRI & Band & Share of households & 60+ days late (2025) & New 60+ days late by 
 \end{tabular}
 \end{table}
 
-The bands hold up on a completely different dataset and period: in the 2007--09 Panel, the risk of new delinquency
-falls from 15.1\pct{} in the highest-risk band to 1.0\pct{} in the lowest. A household in the High-risk band is about
-15 times more likely to fall seriously behind than one in the Low-risk band. Interestingly, the Version~1 simulation
-had put its key threshold at about 70. On real data, the boundary of the Low-risk band also lands at 70.
+The bands hold up on a completely different group of families in a completely different period. In the 2007--09
+Panel, the chance of falling badly behind drops from 15.1\pct{} in the High-risk band to just 1.0\pct{} in the Low-risk
+band. A family in the High-risk band was about 15 times more likely to get into serious trouble than a family in the
+Low-risk band. Interestingly, Version~1's simulation pointed to a key threshold around 70. On real data, the boundary of
+the Low-risk band lands at 70 as well.
 
-\takeaway{The bands are no longer provisional guesses. They are calibrated on real outcomes in 2025 and confirmed on
-real outcomes in 2009.}
+\takeaway{The bands are no longer provisional. They are based on real outcomes in 2025 and confirmed on real outcomes in
+2009.}
 
-% ---------------------------------------------------------------------
+\section{Version 1 and Version 2 Side by Side}
+\begin{table}[H]
+\centering\small
+\caption{What changed between the two versions.}
+\label{tab:compare}
+\begin{tabular}{>{\raggedright}p{3.6cm}>{\raggedright}p{5.2cm}>{\raggedright\arraybackslash}p{5.4cm}}
+\toprule
+ & Version 1 & Version 2\\
+\midrule
+Households & 1,000 created by a computer & More than 12,000 real U.S.\ families\\
+Weights & 25 / 25 / 25 / 25 (a neutral guess) & 5 / 30 / 55 / 10 (chosen from real data)\\
+Tested against & The ONS test, on simulated families & Real missed payments, payday loans, bankruptcies and refused credit\\
+Predicts the future? & Not tested & Tested on the 2008 crisis\\
+Fairness check & Not possible & Ten held-out tests on unseen families\\
+Score bands & 65--70 threshold, provisional & 35 / 55 / 70, based on real outcomes\\
+Recognising trouble now (average AUC) & 0.709 & 0.752\\
+Predicting trouble later (average AUC) & 0.709 & 0.704\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Why is Version~2 better? Not because a number went up. It is better because every choice in it is now backed by
+evidence. Version~1's weights were a reasonable guess; Version~2's weights come from testing every combination on real
+families and then checking them on families they were never chosen on. Version~1's bands came from imaginary
+households; Version~2's bands come from real ones and were confirmed in a different decade. And Version~2 has been tested
+on something Version~1 never faced: a real financial crisis.
+
 \section{Discussion}
-% ---------------------------------------------------------------------
-Version~1 ended with a measured conclusion: the HFRI was coherent, but not yet validated. Version~2 moves it a long
-way. On thousands of real households, the HFRI separates households in trouble from those that are not, it predicts
-who will fall into trouble during a financial crisis, and its bands mean something measurable.
+The most important lesson from this research was not the final set of weights. It was the difference between ``now''
+and ``later''. If I had only tested the index on families' current situations, the data would have told me to build an
+index made almost entirely of cash savings. That index would look excellent on paper, but it would have badly misjudged
+families with heavy debts going into the 2008 crisis. This is a trap that applies to measuring almost anything: when a
+cause and its damage tend to appear together, a measure can end up describing the damage instead of predicting the risk.
+Testing on a different period, with outcomes that happened \emph{after} the score was calculated, is what caught it.
 
-The most important lesson, though, was not the final weights. It was the gap between ``now'' and ``future''. If I had
-only used SCF 2025, the data would have told me to build an index that is nearly all Emergency Coverage. That index
-looks great on paper, but it would have badly misjudged households with heavy debts during the 2008 crisis. This is a
-general trap in measuring anything. When an outcome and a cause tend to happen together, an index can end up
-measuring the damage instead of the risk. Testing on a different period, with outcomes that happen \emph{after} the
-score is measured, is what caught it.
+So why not just use cash savings, and keep things simple? There are three reasons. It is much worse at predicting
+future trouble (0.657 against 0.718 for the revised index). It completely misses dangerous debt (0.506 on the 2007
+debt measure). And a single number cannot tell a family \emph{why} it is vulnerable. The HFRI can. A family with eight
+months of savings but half its income going to loan repayments needs very different advice from a family with no
+savings and no debt.
 
-So why not just use Emergency Coverage and keep things simple? Three reasons. It is worse at predicting the future
-(0.657 vs 0.718). It completely misses debt problems (0.506 on the 2007 debt benchmark). And a single number cannot
-tell a household \emph{why} it is vulnerable. The HFRI can: a household with 8 months of savings and a 50\pct{}
-repayment burden needs very different advice from one with no savings and no debt.
+In practice, the revised HFRI can be used by a family, a bank or a policymaker in a simple way. A score below 35 signals
+a family more than twice as likely as average to be badly behind on its payments. Looking at the four part scores then
+shows whether the fix is to build a cushion, reduce debt, or both.
 
-For a household, a bank or a policymaker, the practical use is straightforward. A score below 35 signals a household
-more than twice as likely as average to be seriously behind on payments. Looking at the four dimension scores shows
-whether the fix is building a cushion, reducing debt, or both.
-
-% ---------------------------------------------------------------------
 \section{Limitations}
-% ---------------------------------------------------------------------
+No study is perfect, and it is important to be honest about where this one could be wrong.
 \begin{enumerate}
-\item \textbf{Proxies.} Expense Stability in 2025 and Savings Strength in 2007 come from simple survey questions
-rather than month-by-month data. Essential spending in 2007 is assumed to be 70\pct{} of income. Better data would
-give better estimates of these two dimensions, and possibly different weights for them.
-\item \textbf{U.S.\ data, Indian context.} Version~1 was set in Indian rupees, while the SCF covers U.S.\ households.
-The formulas use ratios, so they travel, but the weights should be re-tested on Indian data (for example, the
-NSS or RBI household surveys) before being applied in India.
-\item \textbf{One crisis.} The future test comes from 2007--09, which was an extreme period dominated by job losses and a
-debt crisis. In a different kind of shock (say, an inflation shock), the balance between debt and savings could be
-different.
-\item \textbf{The future trade-off is real.} On unseen households, the new weights are slightly worse than the
-original at predicting future distress ($-0.009$, not statistically significant). I chose to accept this for a large
-gain in present accuracy, but someone who cares only about prediction could reasonably prefer weights closer to the
+\item \textbf{Some measures are stand-ins.} Spending stability in 2025 and the saving habit in 2007 come from simple
+yes-or-no style survey questions rather than month-by-month records. Essential spending in 2007 is assumed to be
+70\pct{} of income. Better data could change the weights on these parts.
+\item \textbf{The data is American.} Version~1 was set in an Indian context, but the SCF covers U.S.\ families. The HFRI
+uses ratios, so it can be applied anywhere, but the weights should be tested on Indian household data before they are
+used in India.
+\item \textbf{One crisis.} The ``later'' test comes from 2007--09, a crisis driven by job losses and debt. A different kind
+of shock, such as rapidly rising prices, might change the balance between savings and debt.
+\item \textbf{A small trade-off.} On unseen families, the new weights are very slightly worse than the original at
+predicting future trouble (by about 0.01, which is small and could be luck). I accepted this for a much larger gain in
+recognising trouble now, but someone who cares only about the future could reasonably prefer weights closer to the
 original.
-\item \textbf{Approximate taxes.} The SCF reports income before tax, so I applied an approximate average tax rate by
-income band. This affects every ratio slightly.
-\item \textbf{Association, not causation.} A low HFRI \emph{predicts} trouble. That does not prove that raising a
-household's score would \emph{prevent} it.
+\item \textbf{Taxes are estimated.} The survey records income before tax, so I applied an estimated tax rate based on
+income level.
+\item \textbf{Prediction, not cause.} A low HFRI \emph{predicts} trouble. That does not prove that raising a family's
+score would \emph{prevent} it.
 \end{enumerate}
 
-% ---------------------------------------------------------------------
 \section{Conclusion}
-% ---------------------------------------------------------------------
-Version~1 asked whether a transparent index could measure household financial resilience, and could only answer
-inside a simulation. Version~2 took it to real households. The original equal-weight HFRI worked: it identified
-real financial distress with an AUC of 0.736 and stayed significant after controlling for income and family
-characteristics. The data then showed that the weights should change, but not in the simple direction it first
-suggested. Emergency Coverage explains distress now, Debt Sustainability explains distress later, and a balanced
-index needs both. The revised index,
+Version~1 asked whether a transparent index could measure household financial resilience, and could only answer that
+question inside a computer simulation. Version~2 tested it on more than 12,000 real families. The original
+equal-weight HFRI passed: families with low scores were far more likely to be in financial trouble, even after
+accounting for income. The real data then showed that the four parts should not count equally, though not in the simple
+way it first suggested. Cash savings explain trouble now; debt explains trouble later; a good index needs both. The
+revised index,
 \[
-HFRI_{v2} = 0.05\,S + 0.30\,D + 0.55\,E + 0.10\,X,
+\text{HFRI}_{\text{Version 2}} = 0.05\times\text{Savings} + 0.30\times\text{Debt} + 0.55\times\text{Emergency} + 0.10\times\text{Stability},
 \]
-improves accuracy on all five current-distress outcomes, beats the original in every held-out test, and stays far
-better than any single dimension at predicting the future. The next step is clear: test it on Indian household data.
+recognises current trouble better on every one of the five signs tested, beat the original in all ten fair tests on
+unseen families, and remains far better than cash savings alone at seeing trouble coming. The next step is to test it
+on Indian household data.
 
 \section*{Data and Code Availability}
-All code, the master dataset (65,060 rows covering every household used here), figures and tables are public at
-\url{https://github.com/agarwalvivaan09-ai/HFRIV2}. The raw files are downloaded directly from the Federal Reserve
-and checked against the SHA-256 fingerprints in Table~\ref{tab:data}. Every random step uses seed 42, and running
-\texttt{python3 run\_all.py} reproduces every number in this paper in about ten minutes. The analysis uses pandas,
-NumPy, SciPy, statsmodels, scikit-learn and Matplotlib \cite{pandas,numpy,scipy,statsmodels,sklearn,matplotlib}.
+All code, the combined dataset (65,060 rows covering every household used in this paper), figures and tables are freely
+available at \url{https://github.com/agarwalvivaan09-ai/HFRIV2}. The survey files are downloaded directly from the
+Federal Reserve, and each file is checked against a digital fingerprint (a SHA-256 code) to make sure it is identical to
+the one used here. Every random step uses the same seed (42), so running \texttt{python3 run\_all.py} reproduces every
+number in this paper in about ten minutes. The analysis was written in Python using pandas, NumPy, SciPy, statsmodels,
+scikit-learn and Matplotlib \cite{pandas,numpy,scipy,statsmodels,sklearn,matplotlib}.
 
 % ---------------------------------------------------------------------
 \begin{thebibliography}{99}\small
@@ -740,23 +933,23 @@ NumPy, SciPy, statsmodels, scikit-learn and Matplotlib \cite{pandas,numpy,scipy,
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{fig04_auc_now.pdf}
-\caption{AUC with 95\pct{} bootstrap confidence intervals for the five current-distress outcomes (SCF 2025).}
+\caption{AUC for the five signs of trouble now (SCF 2025), with 95\pct{} confidence ranges.}
 \label{fig:aucnow}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{fig08_benchmarks.pdf}
-\caption{Average AUC against each group of benchmarks.}
+\caption{Average agreement (AUC) with each group of official measures and signs of trouble.}
 \label{fig:bench}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.75\textwidth]{fig02_simulation_distribution.pdf}
-\caption{The Version~1 simulated households scored with the original and the final weights. With the final weights,
-the mean falls from 75.84 to 72.12 and the correlation with the ONS-style benchmark rises from 0.873 to 0.917. The
-ranking of households barely changes (rank correlation 0.951).}
+\caption{The 1,000 Version~1 simulated households scored with the original and the revised weights. With the revised
+weights, the average score falls from 75.84 to 72.12 and the correlation with the ONS test rises from 0.873 to 0.917. The
+order of households barely changes (rank correlation 0.951).}
 \label{fig:sim}
 \end{figure}
 
